@@ -1,4 +1,5 @@
-import { type CSSProperties, useEffect, useState } from 'react'
+import { type CSSProperties, type FormEvent, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   ArrowRight,
   Award,
@@ -15,6 +16,8 @@ import {
   Headphones,
   LifeBuoy,
   ListChecks,
+  Lock,
+  LogOut,
   MapPin,
   Menu,
   MonitorSmartphone,
@@ -41,6 +44,9 @@ import ProductDetailsPage from './ProductDetails'
 import AboutPage from './About'
 import ContactPage from './Contact'
 import ServicesPage from './Services'
+import NewsPage from './News'
+import GoogleSignIn from './components/GoogleSignIn'
+import { authApi, type AuthUser } from './auth'
 
 const services = [
   {
@@ -193,9 +199,29 @@ function Brand() {
   )
 }
 
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.24 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+      <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z" />
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06L5.84 9.9C6.71 7.31 9.14 5.38 12 5.38z" />
+    </svg>
+  )
+}
+
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
+  const [accountMode, setAccountMode] = useState<'signin' | 'signup'>('signin')
+  const [accountName, setAccountName] = useState('')
+  const [accountEmail, setAccountEmail] = useState('')
+  const [accountPhone, setAccountPhone] = useState('')
+  const [accountPassword, setAccountPassword] = useState('')
+  const [accountRePassword, setAccountRePassword] = useState('')
+  const [accountUser, setAccountUser] = useState<AuthUser | null>(null)
+  const [accountLoading, setAccountLoading] = useState(false)
+  const [accountError, setAccountError] = useState('')
   const [scrolled, setScrolled] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
   const [route, setRoute] = useState(() => window.location.hash)
@@ -206,6 +232,7 @@ export default function App() {
   const isAboutPage = route === '#/about' || route.startsWith('#/about/')
   const isContactPage = route === '#/contact' || route.startsWith('#/contact/')
   const isServicesPage = route === '#/services' || route.startsWith('#/services/')
+  const isNewsPage = route === '#/news' || route.startsWith('#/news/')
 
   useEffect(() => {
     const onHashChange = () => setRoute(window.location.hash)
@@ -255,10 +282,80 @@ export default function App() {
     return () => observer.disconnect()
   }, [route])
 
+  useEffect(() => {
+    document.body.classList.toggle('account-modal-open', accountOpen)
+    return () => document.body.classList.remove('account-modal-open')
+  }, [accountOpen])
+
   const goContact = () => {
     window.location.hash = '#/contact'
     setMenuOpen(false)
   }
+
+  useEffect(() => {
+    authApi.me()
+      .then(({ user }) => setAccountUser(user))
+      .catch(() => setAccountUser(null))
+  }, [])
+
+  const resetAccountFeedback = () => setAccountError('')
+
+  const submitAccount = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    resetAccountFeedback()
+    if (accountMode === 'signup' && accountPassword !== accountRePassword) {
+      setAccountError('Passwords do not match.')
+      return
+    }
+
+    setAccountLoading(true)
+    try {
+      const result = accountMode === 'signup'
+        ? await authApi.signup({
+            name: accountName.trim(),
+            phone: accountPhone.trim(),
+            email: accountEmail.trim(),
+            password: accountPassword,
+          })
+        : await authApi.login({ identifier: accountEmail.trim(), password: accountPassword })
+      setAccountUser(result.user)
+      setAccountPassword('')
+      setAccountRePassword('')
+    } catch (error) {
+      setAccountError(error instanceof Error ? error.message : 'Unable to sign in. Please try again.')
+    } finally {
+      setAccountLoading(false)
+    }
+  }
+
+  const signInWithGoogle = async (credential: string) => {
+    resetAccountFeedback()
+    setAccountLoading(true)
+    try {
+      const result = await authApi.google(credential)
+      setAccountUser(result.user)
+      setAccountPassword('')
+      setAccountRePassword('')
+    } catch (error) {
+      setAccountError(error instanceof Error ? error.message : 'Google sign-in failed. Please try again.')
+    } finally {
+      setAccountLoading(false)
+    }
+  }
+
+  const logoutAccount = async () => {
+    setAccountLoading(true)
+    try {
+      await authApi.logout()
+      setAccountUser(null)
+      setAccountOpen(false)
+    } finally {
+      setAccountLoading(false)
+    }
+  }
+
+  const normalizedRoute = route || '#home'
+  const isHomeRoute = normalizedRoute === '' || normalizedRoute === '#home' || normalizedRoute === '#/'
 
   return (
     <main className="site-shell">
@@ -269,19 +366,19 @@ export default function App() {
         <div className="nav-shell">
           <Brand />
           <nav className="desktop-nav" aria-label="Primary navigation">
-            <a href="#home" className="active">Home</a>
-            <a href="#solutions">Solutions</a>
-            <ProductMegaMenu />
-            <a href="#/services">Services</a>
-            <a href="#/about">About</a>
-            <a href="#/contact">Contact</a>
+            <a href="#home" className={isHomeRoute ? 'active' : ''}>Home</a>
+            <ProductMegaMenu active={normalizedRoute.startsWith('#/products')} />
+            <a href="#/services" className={normalizedRoute.startsWith('#/services') ? 'active' : ''}>Services</a>
+            <a href="#/news" className={normalizedRoute.startsWith('#/news') ? 'active' : ''}>News</a>
+            <a href="#/about" className={normalizedRoute.startsWith('#/about') ? 'active' : ''}>About</a>
+            <a href="#/contact" className={normalizedRoute.startsWith('#/contact') ? 'active' : ''}>Contact</a>
           </nav>
           <div className="nav-actions">
             <HeaderTools />
             <div className="account-menu-wrap">
               <button
                 className={`tool-button account-tool ${accountOpen ? 'is-open' : ''}`}
-                onClick={() => setAccountOpen((value) => !value)}
+                onClick={() => setAccountOpen(true)}
                 aria-label="Open account menu"
                 aria-expanded={accountOpen}
                 title="Account"
@@ -289,12 +386,6 @@ export default function App() {
                 <UserCircle size={20} />
                 <span className="tool-shine" />
               </button>
-              {accountOpen && (
-                <div className="account-popover">
-                  <a href="#signin" onClick={() => setAccountOpen(false)}>Sign in</a>
-                  <a href="#signup" onClick={() => setAccountOpen(false)}>Sign up</a>
-                </div>
-              )}
             </div>
           </div>
           <button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Open menu"><Menu size={23} /></button>
@@ -306,7 +397,6 @@ export default function App() {
           <div className="mobile-menu-head"><Brand /><button onClick={() => setMenuOpen(false)}><X /></button></div>
           <nav>
             <a href="#home" onClick={() => setMenuOpen(false)}>Home<ArrowRight size={18}/></a>
-            <a href="#solutions" onClick={() => setMenuOpen(false)}>Solutions<ArrowRight size={18}/></a>
             <div className="mobile-products-group">
               <span>Products</span>
               <a href="#/products/education" onClick={() => setMenuOpen(false)}>Educational Products<ArrowRight size={16}/></a>
@@ -315,14 +405,118 @@ export default function App() {
               <a href="#/products/media" onClick={() => setMenuOpen(false)}>Media Products<ArrowRight size={16}/></a>
             </div>
             <a href="#/services" onClick={() => setMenuOpen(false)}>Services<ArrowRight size={18}/></a>
+            <a href="#/news" onClick={() => setMenuOpen(false)}>News<ArrowRight size={18}/></a>
             <a href="#/about" onClick={() => setMenuOpen(false)}>About<ArrowRight size={18}/></a>
             <a href="#/contact" onClick={() => setMenuOpen(false)}>Contact<ArrowRight size={18}/></a>
           </nav>
           <div className="mobile-account-actions">
-            <a href="#signin" onClick={() => setMenuOpen(false)}>Sign in</a>
-            <a href="#signup" onClick={() => setMenuOpen(false)}>Sign up</a>
+            <button type="button" onClick={() => { setMenuOpen(false); setAccountMode('signin'); setAccountOpen(true); resetAccountFeedback() }}>Sign in</button>
+            <button type="button" onClick={() => { setMenuOpen(false); setAccountMode('signup'); setAccountOpen(true); resetAccountFeedback() }}>Sign up</button>
           </div>
         </div>
+      )}
+
+      {accountOpen && createPortal(
+        <div className="account-modal-overlay" onMouseDown={(event) => event.target === event.currentTarget && setAccountOpen(false)}>
+          <section className="account-modal" role="dialog" aria-modal="true" aria-label="Account">
+            <button className="account-modal-close" type="button" onClick={() => setAccountOpen(false)} aria-label="Close account modal"><X size={17} /></button>
+
+            {accountUser ? (
+              <div className="account-profile-view">
+                <div className="account-avatar">{accountUser.name.slice(0, 1)}</div>
+                <span className="account-kicker">SIGNED IN</span>
+                <h2>{accountUser.name}</h2>
+                <p>{accountUser.email}</p>
+                <button
+                  className="account-logout"
+                  type="button"
+                  onClick={logoutAccount}
+                  disabled={accountLoading}
+                >
+                  <LogOut size={17} /> Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="account-modal-head">
+                  <span className="account-kicker">AFGHAN POWER ACCOUNT</span>
+                  <h2>{accountMode === 'signin' ? 'Welcome back.' : 'Create account.'}</h2>
+                </div>
+
+                <form className="account-form" onSubmit={submitAccount}>
+                  {accountMode === 'signup' && (
+                    <>
+                      <label>
+                        <span>Full name</span>
+                        <div>
+                          <UserCircle size={16} />
+                          <input required minLength={2} value={accountName} onChange={(event) => setAccountName(event.target.value)} type="text" placeholder="Your full name" autoComplete="name" />
+                        </div>
+                      </label>
+                      <label>
+                        <span>Phone number</span>
+                        <div>
+                          <Phone size={16} />
+                          <input required value={accountPhone} onChange={(event) => setAccountPhone(event.target.value)} type="tel" placeholder="+93 700 000 000" autoComplete="tel" />
+                        </div>
+                      </label>
+                    </>
+                  )}
+                  <label>
+                    <span>{accountMode === 'signin' ? 'Email or phone' : 'Email'}</span>
+                    <div>
+                      <Mail size={16} />
+                      <input required value={accountEmail} onChange={(event) => setAccountEmail(event.target.value)} type={accountMode === 'signin' ? 'text' : 'email'} placeholder={accountMode === 'signin' ? 'Email or phone number' : 'you@example.com'} autoComplete={accountMode === 'signin' ? 'username' : 'email'} />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Password</span>
+                    <div>
+                      <Lock size={16} />
+                      <input required minLength={8} value={accountPassword} onChange={(event) => setAccountPassword(event.target.value)} type="password" placeholder="At least 8 characters" autoComplete={accountMode === 'signin' ? 'current-password' : 'new-password'} />
+                    </div>
+                  </label>
+                  {accountMode === 'signup' && (
+                    <label>
+                      <span>Confirm password</span>
+                      <div>
+                        <Lock size={16} />
+                        <input required minLength={8} value={accountRePassword} onChange={(event) => setAccountRePassword(event.target.value)} type="password" placeholder="Repeat password" autoComplete="new-password" />
+                      </div>
+                    </label>
+                  )}
+
+                  {accountError && <div className="account-error" role="alert">{accountError}</div>}
+
+                  <div className="account-mode-actions">
+                    <button
+                      className={accountMode === 'signin' ? 'active' : ''}
+                      disabled={accountLoading}
+                      type={accountMode === 'signin' ? 'submit' : 'button'}
+                      onClick={() => { setAccountMode('signin'); resetAccountFeedback() }}
+                    >
+                      {accountMode === 'signin' && accountLoading ? 'Signing in…' : 'Sign in'}
+                    </button>
+                    <button
+                      className={accountMode === 'signup' ? 'active' : ''}
+                      disabled={accountLoading}
+                      type={accountMode === 'signup' ? 'submit' : 'button'}
+                      onClick={() => { setAccountMode('signup'); resetAccountFeedback() }}
+                    >
+                      {accountMode === 'signup' && accountLoading ? 'Creating…' : 'Sign up'}
+                    </button>
+                  </div>
+                </form>
+
+                <div className="account-more">
+                  <span>Or continue with Google</span>
+                  <GoogleSignIn onCredential={signInWithGoogle} disabled={accountLoading} />
+                </div>
+              </>
+            )}
+          </section>
+        </div>,
+        document.body,
       )}
 
       {isProductDetailPage ? (
@@ -335,6 +529,8 @@ export default function App() {
         <ContactPage />
       ) : isServicesPage ? (
         <ServicesPage />
+      ) : isNewsPage ? (
+        <NewsPage />
       ) : (
       <>
       <section id="home" className="hero-section">

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronDown, Languages, Moon, Search, Sun, X } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { Bell, Check, Languages, Moon, Search, Sun, Trash2, X } from 'lucide-react'
 
 type LangCode = 'en' | 'fa' | 'ps'
 
@@ -27,6 +28,7 @@ export default function HeaderTools({ onLanguageChange }: Props) {
     document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
   )
   const [languageOpen, setLanguageOpen] = useState(false)
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [language, setLanguage] = useState<LangCode>('en')
   const searchInput = useRef<HTMLInputElement>(null)
 
@@ -41,10 +43,16 @@ export default function HeaderTools({ onLanguageChange }: Props) {
   }, [searchOpen])
 
   useEffect(() => {
+    document.body.classList.toggle('search-modal-open', searchOpen)
+    return () => document.body.classList.remove('search-modal-open')
+  }, [searchOpen])
+
+  useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSearchOpen(false)
         setLanguageOpen(false)
+        setNotificationsOpen(false)
       }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
@@ -71,6 +79,8 @@ export default function HeaderTools({ onLanguageChange }: Props) {
     onLanguageChange?.(code)
   }
 
+  const languageBadge = language === 'fa' ? 'D' : language.toUpperCase()
+
   return (
     <>
       <div className="header-tools" aria-label="Website tools">
@@ -92,13 +102,15 @@ export default function HeaderTools({ onLanguageChange }: Props) {
         <div className="language-tool-wrap">
           <button
             className={`tool-button language-tool ${languageOpen ? 'is-open' : ''}`}
-            onClick={() => setLanguageOpen((value) => !value)}
+            onClick={() => {
+              setNotificationsOpen(false)
+              setLanguageOpen((value) => !value)
+            }}
             aria-label="Change language"
             title="Language"
           >
             <Languages size={18} strokeWidth={2} />
-            <span className="language-mini">{language.toUpperCase()}</span>
-            <ChevronDown className="language-chevron" size={13} />
+            <span className="language-badge">{languageBadge}</span>
             <span className="tool-shine" />
           </button>
           {languageOpen && (
@@ -117,9 +129,37 @@ export default function HeaderTools({ onLanguageChange }: Props) {
             </div>
           )}
         </div>
+
+        <div className="notification-tool-wrap">
+          <button
+            className={`tool-button notification-tool ${notificationsOpen ? 'is-open' : ''}`}
+            onClick={() => {
+              setLanguageOpen(false)
+              setNotificationsOpen((value) => !value)
+            }}
+            aria-label="Open notifications"
+            aria-expanded={notificationsOpen}
+            title="Notifications"
+          >
+            <Bell size={18} strokeWidth={2.1} />
+            <span className="tool-shine" />
+          </button>
+          {notificationsOpen && (
+            <div className="notification-popover" role="dialog" aria-label="Notifications">
+              <div className="notification-popover-head">
+                <strong>Notifications</strong>
+                <div>
+                  <button type="button" aria-label="Mark all as read" title="Mark all as read"><Check size={14} /></button>
+                  <button type="button" aria-label="Clear notifications" title="Clear notifications"><Trash2 size={14} /></button>
+                </div>
+              </div>
+              <div className="notification-empty">No notifications right now.</div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {searchOpen && (
+      {searchOpen && createPortal(
         <div className="search-overlay" onMouseDown={(event) => event.target === event.currentTarget && setSearchOpen(false)}>
           <div className="search-dialog" role="dialog" aria-modal="true" aria-label="Search Afghan Power Group">
             <div className="search-dialog-top">
@@ -149,7 +189,8 @@ export default function HeaderTools({ onLanguageChange }: Props) {
             </div>
             <div className="search-footer"><span>Static search preview</span><span>⌘ / Ctrl + K</span></div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   )

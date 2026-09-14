@@ -17,6 +17,7 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
+import { useState } from 'react'
 
 const divisions = [
   {
@@ -102,12 +103,42 @@ const values = [
 ]
 
 const reasons = [
-  { icon: Layers, title: 'One Group, Multiple Services', text: 'Education, travel, technology and media expertise under one coordinated brand.' },
-  { icon: Users, title: 'Specialized Teams', text: 'Each division focuses on its own field while sharing a common standard of service.' },
-  { icon: MapPin, title: 'Local Understanding', text: 'Solutions are shaped around Afghan clients, businesses and practical local realities.' },
-  { icon: Lightbulb, title: 'Modern Thinking', text: 'We combine proven processes with new tools, digital systems and better customer experiences.' },
-  { icon: HeartHandshake, title: 'Clear Relationships', text: 'Straightforward communication and structured service keep every engagement easier to follow.' },
-  { icon: Award, title: 'Long-Term Value', text: 'We aim to create useful results and relationships that remain valuable after delivery.' },
+  {
+    icon: Layers,
+    title: 'One Group, Multiple Services',
+    text: 'Education, travel, technology and media expertise under one coordinated brand.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1100&q=84',
+  },
+  {
+    icon: Users,
+    title: 'Specialized Teams',
+    text: 'Each division focuses on its own field while sharing a common standard of service.',
+    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1100&q=84',
+  },
+  {
+    icon: MapPin,
+    title: 'Local Understanding',
+    text: 'Solutions are shaped around Afghan clients, businesses and practical local realities.',
+    image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1100&q=84',
+  },
+  {
+    icon: Lightbulb,
+    title: 'Modern Thinking',
+    text: 'We combine proven processes with new tools, digital systems and better customer experiences.',
+    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1100&q=84',
+  },
+  {
+    icon: HeartHandshake,
+    title: 'Clear Relationships',
+    text: 'Straightforward communication and structured service keep every engagement easier to follow.',
+    image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1100&q=84',
+  },
+  {
+    icon: Award,
+    title: 'Long-Term Value',
+    text: 'We aim to create useful results and relationships that remain valuable after delivery.',
+    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1100&q=84',
+  },
 ]
 
 const leaders = [
@@ -184,6 +215,9 @@ const metrics = [
 ]
 
 export default function AboutPage() {
+  const [activeReasonIndex, setActiveReasonIndex] = useState(0)
+  const activeReason = reasons[activeReasonIndex]
+
   return (
     <div className="about-page">
       <section className="about-hero">
@@ -303,14 +337,35 @@ export default function AboutPage() {
           <h2>Built around useful service, not unnecessary complexity.</h2>
           <p>Our group structure helps clients access specialist teams while keeping communication, quality and support connected.</p>
         </div>
-        <div className="about-reasons-grid">
-          {reasons.map(({ icon: Icon, title, text }, index) => (
-            <article key={title}>
-              <div className="about-reason-top"><span><Icon size={20} /></span><small>{String(index + 1).padStart(2, '0')}</small></div>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </article>
-          ))}
+        <div className="about-reasons-showcase">
+          <div className="about-reason-picker" role="tablist" aria-label="Why Afghan Power Group categories">
+            {reasons.map(({ icon: Icon, title, text }, index) => (
+              <button
+                className={activeReasonIndex === index ? 'is-active' : ''}
+                type="button"
+                role="tab"
+                aria-selected={activeReasonIndex === index}
+                aria-controls="about-reason-panel"
+                id={`about-reason-tab-${index}`}
+                onClick={() => setActiveReasonIndex(index)}
+                key={title}
+              >
+                <span><Icon size={20} /></span>
+                <strong>{title}</strong>
+                <small>{text}</small>
+              </button>
+            ))}
+          </div>
+          <article
+            className="about-reason-feature"
+            role="tabpanel"
+            id="about-reason-panel"
+            aria-labelledby={`about-reason-tab-${activeReasonIndex}`}
+          >
+            <div className="about-reason-feature-image" key={activeReason.title}>
+              <img src={activeReason.image} alt={activeReason.title} loading="lazy" />
+            </div>
+          </article>
         </div>
       </section>
 

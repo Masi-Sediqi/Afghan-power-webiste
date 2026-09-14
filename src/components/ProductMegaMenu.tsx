@@ -31,10 +31,14 @@ const productGroups = [
   },
 ]
 
-export default function ProductMegaMenu() {
+type ProductMegaMenuProps = {
+  active?: boolean
+}
+
+export default function ProductMegaMenu({ active = false }: ProductMegaMenuProps) {
   return (
     <div className="products-nav-wrap">
-      <a className="products-nav-trigger" href="#/products" aria-haspopup="true">
+      <a className={`products-nav-trigger ${active ? 'active' : ''}`} href="#/products" aria-haspopup="true">
         Products <ChevronDown className="products-nav-caret" size={13} strokeWidth={2.3} />
       </a>
       <div className="products-mega" role="menu" aria-label="Product categories">
