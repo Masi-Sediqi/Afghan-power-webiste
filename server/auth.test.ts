@@ -33,3 +33,13 @@ test('rejects a tampered session token', () => {
   assert.equal(verifySession(token, secret)?.userId, 42)
   assert.equal(verifySession(`${token}x`, secret), null)
 })
+
+
+test('preserves admin session scope and rejects scope tampering', () => {
+  const secret = 'another-test-secret-that-is-long-enough'
+  const token = signSession({ userId: 7, scope: 'admin' }, secret, 60)
+  const session = verifySession(token, secret)
+  assert.equal(session?.userId, 7)
+  assert.equal(session?.scope, 'admin')
+  assert.equal(verifySession(`${token}tampered`, secret), null)
+})

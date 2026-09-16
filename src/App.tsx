@@ -47,6 +47,7 @@ import ServicesPage from './Services'
 import NewsPage from './News'
 import GoogleSignIn from './components/GoogleSignIn'
 import { authApi, type AuthUser } from './auth'
+import AdminApp from './AdminApp'
 
 const services = [
   {
@@ -210,7 +211,7 @@ function GoogleIcon() {
   )
 }
 
-export default function App() {
+function PublicSite() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
   const [accountMode, setAccountMode] = useState<'signin' | 'signup'>('signin')
@@ -672,4 +673,10 @@ export default function App() {
       <ChatBot />
     </main>
   )
+}
+
+
+export default function App() {
+  const isAdminPath = window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/')
+  return isAdminPath ? <AdminApp /> : <PublicSite />
 }

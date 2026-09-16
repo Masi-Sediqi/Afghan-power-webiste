@@ -16,6 +16,17 @@ export type UserRow = SafeUser & {
   googleSub: string | null
 }
 
+
+export type SafeAdmin = {
+  id: number
+  email: string
+  createdAt: string
+}
+
+export type AdminRow = SafeAdmin & {
+  passwordHash: string
+}
+
 function connectionString() {
   const value = process.env.DATABASE_URL?.trim()
   if (!value) throw new Error('DATABASE_URL is required')
@@ -41,6 +52,15 @@ export async function initDb() {
     CREATE UNIQUE INDEX IF NOT EXISTS users_email_unique ON users (LOWER(email));
     CREATE UNIQUE INDEX IF NOT EXISTS users_phone_unique ON users (phone) WHERE phone IS NOT NULL AND phone <> '';
     CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_unique ON users (google_sub) WHERE google_sub IS NOT NULL AND google_sub <> '';
+
+    CREATE TABLE IF NOT EXISTS admins (
+      id BIGSERIAL PRIMARY KEY,
+      email TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS admins_email_unique ON admins (LOWER(email));
   `)
 }
 
@@ -108,4 +128,58 @@ export async function upsertGoogleUser(input: { name: string; email: string; goo
     [input.name, input.email, input.googleSub, input.avatarUrl || null],
   )
   return toUser(result.rows[0])
+}
+
+
+function toAdmin(row: any): AdminRow {
+  return {
+    id: Number(row.id),
+    email: row.email,
+    passwordHash: row.password_hash,
+    createdAt: new Date(row.created_at).toISOString(),
+  }
+}
+
+export function safeAdmin(admin: AdminRow): SafeAdmin {
+  const { passwordHash: _passwordHash, ...safe } = admin
+  return safe
+}
+
+export async function adminCount() {
+  const result = await pool.query('SELECT COUNT(*)::int AS count FROM admins')
+  return Number(result.rows[0]?.count || 0)
+}
+
+export async function findAdminById(id: number) {
+  const result = await pool.query('SELECT * FROM admins WHERE id = $1 LIMIT 1', [id])
+  return result.rowCount ? toAdmin(result.rows[0]) : null
+}
+
+export async function findAdminByEmail(email: string) {
+  const result = await pool.query('SELECT * FROM admins WHERE LOWER(email) = LOWER($1) LIMIT 1', [email])
+  return result.rowCount ? toAdmin(result.rows[0]) : null
+}
+
+export async function createInitialAdmin(input: { email: string; passwordHash: string }) {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    await client.query('LOCK TABLE admins IN EXCLUSIVE MODE')
+    const existing = await client.query('SELECT COUNT(*)::int AS count FROM admins')
+    if (Number(existing.rows[0]?.count || 0) > 0) {
+      await client.query('ROLLBACK')
+      return null
+    }
+    const result = await client.query(
+      'INSERT INTO admins (email, password_hash) VALUES ($1, $2) RETURNING *',
+      [input.email, input.passwordHash],
+    )
+    await client.query('COMMIT')
+    return toAdmin(result.rows[0])
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
 }

@@ -32,7 +32,7 @@ export async function verifyPassword(password: string, stored: string) {
   return expected.length === derived.length && timingSafeEqual(expected, derived)
 }
 
-type SessionPayload = { userId: number; exp?: number }
+export type SessionPayload = { userId: number; scope?: 'customer' | 'admin'; exp?: number }
 
 function encode(value: string) {
   return Buffer.from(value).toString('base64url')
@@ -42,7 +42,7 @@ function signature(payload: string, secret: string) {
   return createHmac('sha256', secret).update(payload).digest('base64url')
 }
 
-export function signSession(payload: { userId: number }, secret: string, ttlSeconds = 60 * 60 * 24 * 7) {
+export function signSession(payload: { userId: number; scope?: 'customer' | 'admin' }, secret: string, ttlSeconds = 60 * 60 * 24 * 7) {
   const body = encode(JSON.stringify({ ...payload, exp: Math.floor(Date.now() / 1000) + ttlSeconds }))
   return `${body}.${signature(body, secret)}`
 }

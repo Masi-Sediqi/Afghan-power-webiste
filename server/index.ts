@@ -1,6 +1,6 @@
 import http, { type IncomingMessage, type ServerResponse } from 'node:http'
 import { URL } from 'node:url'
-import { createLocalUser, findUserByEmail, findUserById, findUserByIdentifier, initDb, safeUser, upsertGoogleUser } from './db.js'
+import { adminCount, createInitialAdmin, createLocalUser, findAdminByEmail, findAdminById, findUserByEmail, findUserById, findUserByIdentifier, initDb, safeAdmin, safeUser, upsertGoogleUser } from './db.js'
 import { hashPassword, normalizeEmail, normalizePhone, parseCookies, signSession, validatePassword, verifyPassword, verifySession } from './auth.js'
 
 const port = Number(process.env.PORT || 3001)
@@ -30,12 +30,30 @@ function clearCookie() {
   return `ap_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${isProduction ? '; Secure' : ''}`
 }
 
+
+function adminSessionCookie(token: string) {
+  return `ap_admin_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict${isProduction ? '; Secure' : ''}`
+}
+
+function clearAdminCookie() {
+  return `ap_admin_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${isProduction ? '; Secure' : ''}`
+}
+
 async function currentUser(req: IncomingMessage) {
   const token = parseCookies(req.headers.cookie).ap_session
   if (!token) return null
   const session = verifySession(token, sessionSecret)
   if (!session) return null
   return findUserById(session.userId)
+}
+
+
+async function currentAdmin(req: IncomingMessage) {
+  const token = parseCookies(req.headers.cookie).ap_admin_session
+  if (!token) return null
+  const session = verifySession(token, sessionSecret)
+  if (!session || session.scope !== 'admin') return null
+  return findAdminById(session.userId)
 }
 
 async function handleGoogleCredential(credential: string) {
@@ -57,6 +75,45 @@ async function handleGoogleCredential(credential: string) {
 async function route(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || '/', 'http://localhost')
   if (req.method === 'GET' && url.pathname === '/api/health') return send(res, 200, { ok: true })
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/setup-status') {
+    const configured = (await adminCount()) > 0
+    return send(res, 200, { configured })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/setup') {
+    if ((await adminCount()) > 0) return send(res, 409, { error: 'Admin setup is already complete.' })
+    const body = await readJson(req) as Record<string, string>
+    const email = normalizeEmail(body.email || '')
+    const password = body.password || ''
+    if (!/^\S+@\S+\.\S+$/.test(email)) return send(res, 400, { error: 'Please enter a valid admin email.' })
+    if (!validatePassword(password)) return send(res, 400, { error: 'Password must be at least 8 characters and include a letter and number.' })
+    const admin = await createInitialAdmin({ email, passwordHash: await hashPassword(password) })
+    if (!admin) return send(res, 409, { error: 'Admin setup is already complete.' })
+    const token = signSession({ userId: admin.id, scope: 'admin' }, sessionSecret, 60 * 60 * 12)
+    return send(res, 201, { admin: safeAdmin(admin) }, { 'Set-Cookie': adminSessionCookie(token) })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/login') {
+    const body = await readJson(req) as Record<string, string>
+    const email = normalizeEmail(body.email || '')
+    const password = body.password || ''
+    const admin = await findAdminByEmail(email)
+    if (!admin || !(await verifyPassword(password, admin.passwordHash))) {
+      return send(res, 401, { error: 'Admin email or password is incorrect.' })
+    }
+    const token = signSession({ userId: admin.id, scope: 'admin' }, sessionSecret, 60 * 60 * 12)
+    return send(res, 200, { admin: safeAdmin(admin) }, { 'Set-Cookie': adminSessionCookie(token) })
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/me') {
+    const admin = await currentAdmin(req)
+    return send(res, 200, { admin: admin ? safeAdmin(admin) : null })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/logout') {
+    return send(res, 200, { ok: true }, { 'Set-Cookie': clearAdminCookie() })
+  }
 
   if (req.method === 'GET' && url.pathname === '/api/auth/me') {
     const user = await currentUser(req)
