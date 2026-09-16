@@ -17,7 +17,8 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { aboutApi, type LeadershipRecord, type StoryItemRecord } from './aboutApi'
 
 const divisions = [
   {
@@ -58,24 +59,24 @@ const divisions = [
   },
 ]
 
-const story = [
+const defaultStory: StoryItemRecord[] = [
   {
-    step: '01',
+    id: 'shared-vision', step: '01', visible: true, sortOrder: 1, createdAt: '', updatedAt: '',
     title: 'A shared vision',
     text: 'Afghan Power began with a simple idea: bring practical, professional services together around the real needs of Afghan clients.',
   },
   {
-    step: '02',
+    id: 'specialized-divisions', step: '02', visible: true, sortOrder: 2, createdAt: '', updatedAt: '',
     title: 'Specialized divisions',
     text: 'The group expanded into focused teams for education, travel, technology and media while keeping one unified standard of service.',
   },
   {
-    step: '03',
+    id: 'integrated-solutions', step: '03', visible: true, sortOrder: 3, createdAt: '', updatedAt: '',
     title: 'Integrated solutions',
     text: 'Today, our divisions work independently where expertise matters and together where clients benefit from connected services.',
   },
   {
-    step: '04',
+    id: 'building-next', step: '04', visible: true, sortOrder: 4, createdAt: '', updatedAt: '',
     title: 'Building what comes next',
     text: 'We continue to grow our products, partnerships and capabilities with a long-term focus on useful innovation and dependable support.',
   },
@@ -141,70 +142,78 @@ const reasons = [
   },
 ]
 
-const leaders = [
+const defaultLeaders: LeadershipRecord[] = [
   {
+    id: 'samim-meyakhail', visible: true, sortOrder: 1, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/men/32.jpg',
     role: 'Founder & Director',
     name: 'M. Samim Meyakhail',
     text: 'Provides strategic direction for the group and supports the long-term development of its companies and partnerships.',
   },
   {
+    id: 'imran-afzali', visible: true, sortOrder: 2, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/men/46.jpg',
     role: 'Chief Executive Officer',
     name: 'Imran Afzali',
     text: 'Leads group operations, service development and the execution of Afghan Power Group’s growth across its core divisions.',
   },
   {
+    id: 'education-lead', visible: true, sortOrder: 3, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/women/44.jpg',
     role: 'Education Division Lead',
     name: 'Team Member 03',
     text: 'Coordinates educational consultancy services, student support and international study opportunities across the division.',
   },
   {
+    id: 'travel-lead', visible: true, sortOrder: 4, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/men/52.jpg',
     role: 'Travel Division Lead',
     name: 'Team Member 04',
     text: 'Oversees travel services, visa assistance, ticketing and client coordination for international journeys.',
   },
   {
+    id: 'technology-lead', visible: true, sortOrder: 5, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/men/64.jpg',
     role: 'Technology Division Lead',
     name: 'Team Member 05',
     text: 'Guides software, ERP, database, web and mobile development projects across Afghan Power Tech Development.',
   },
   {
+    id: 'media-lead', visible: true, sortOrder: 6, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/women/65.jpg',
     role: 'Media Division Lead',
     name: 'Team Member 06',
     text: 'Leads creative production, branding, advertising and digital media services for clients and group companies.',
   },
   {
+    id: 'operations-manager', visible: true, sortOrder: 7, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/men/71.jpg',
     role: 'Operations Manager',
     name: 'Team Member 07',
     text: 'Supports day-to-day coordination across divisions and keeps group operations aligned with service standards.',
   },
   {
+    id: 'client-relations', visible: true, sortOrder: 8, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/women/68.jpg',
     role: 'Client Relations Lead',
     name: 'Team Member 08',
     text: 'Focuses on client communication, service quality and creating a smoother experience across the Afghan Power Group.',
   },
   {
+    id: 'business-development', visible: true, sortOrder: 9, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/men/75.jpg',
     role: 'Business Development Lead',
     name: 'Team Member 09',
     text: 'Develops partnerships, identifies growth opportunities and supports the expansion of group services and products.',
   },
   {
+    id: 'administration-finance', visible: true, sortOrder: 10, createdAt: '', updatedAt: '',
     photo: 'https://randomuser.me/api/portraits/women/79.jpg',
     role: 'Administration & Finance',
     name: 'Team Member 10',
     text: 'Supports administrative coordination and financial organization across the group’s operating companies.',
   },
 ]
-
-const leadershipLoop = [...leaders, ...leaders]
 
 
 const metrics = [
@@ -216,7 +225,24 @@ const metrics = [
 
 export default function AboutPage() {
   const [activeReasonIndex, setActiveReasonIndex] = useState(0)
+  const [storyHeading, setStoryHeading] = useState('Built step by step.\nDesigned to grow together.')
+  const [storyIntro, setStoryIntro] = useState('Our story is not about one service. It is about building specialized companies that can grow independently and create more value together.')
+  const [storyItems, setStoryItems] = useState<StoryItemRecord[]>(defaultStory)
+  const [leaders, setLeaders] = useState<LeadershipRecord[]>(defaultLeaders)
   const activeReason = reasons[activeReasonIndex]
+  const leadershipLoop = useMemo(() => leaders.length ? [...leaders, ...leaders] : [], [leaders])
+
+  useEffect(() => {
+    let active = true
+    aboutApi.get().then(({ about }) => {
+      if (!active) return
+      if (about.story.heading) setStoryHeading(about.story.heading)
+      if (about.story.intro) setStoryIntro(about.story.intro)
+      setStoryItems(about.story.items)
+      setLeaders(about.leaders)
+    }).catch(() => {})
+    return () => { active = false }
+  }, [])
 
   return (
     <div className="about-page">
@@ -277,12 +303,12 @@ export default function AboutPage() {
         <div className="about-section-heading">
           <div>
             <div className="about-kicker"><Sparkles size={15} /> OUR STORY</div>
-            <h2>Built step by step.<br />Designed to grow together.</h2>
+            <h2>{storyHeading.split('\n').map((line, index) => <span key={`${line}-${index}`}>{line}{index < storyHeading.split('\n').length - 1 && <br />}</span>)}</h2>
           </div>
-          <p>Our story is not about one service. It is about building specialized companies that can grow independently and create more value together.</p>
+          <p>{storyIntro}</p>
         </div>
         <div className="about-timeline">
-          {story.map((item) => (
+          {storyItems.map((item) => (
             <article className="about-timeline-item" key={item.step}>
               <div className="about-timeline-index">{item.step}</div>
               <span className="about-timeline-dot" />

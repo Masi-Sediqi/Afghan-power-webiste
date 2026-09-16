@@ -1,0 +1,930 @@
+[
+  {
+    "id": "china-admission",
+    "category": "education",
+    "title": "China Admission Package",
+    "subtitle": "Study in China",
+    "description": "A structured admission package for students applying to selected Chinese universities and programs.",
+    "images": [
+      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Admission Support",
+      "Document Review",
+      "Application Guidance"
+    ],
+    "badge": "Popular",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 10,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Education & admission support"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Depends on institution and intake"
+      },
+      {
+        "label": "Application Window",
+        "value": "Confirmed during consultation"
+      },
+      {
+        "label": "Visa Support",
+        "value": "Available where applicable"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A structured admission package for students applying to selected Chinese universities and programs.",
+    "recommendedTitle": "Best suited for",
+    "recommendedFor": [
+      "Students planning international study",
+      "Applicants who want guided document preparation",
+      "Families who prefer one clear admission process"
+    ],
+    "requirementsTitle": "Typical documents",
+    "requirements": [
+      "Passport / ID documents",
+      "Academic records and certificates",
+      "Photo and application documents",
+      "Any institution-specific requirements"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "turkey-study",
+    "category": "education",
+    "title": "Turkey Study Package",
+    "subtitle": "University Admission",
+    "description": "University admission assistance and student application support for study opportunities in Turkey.",
+    "images": [
+      "https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "University Options",
+      "Admission File",
+      "Student Support"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 20,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Education & admission support"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Depends on institution and intake"
+      },
+      {
+        "label": "Application Window",
+        "value": "Confirmed during consultation"
+      },
+      {
+        "label": "Visa Support",
+        "value": "Available where applicable"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "University admission assistance and student application support for study opportunities in Turkey.",
+    "recommendedTitle": "Best suited for",
+    "recommendedFor": [
+      "Students planning international study",
+      "Applicants who want guided document preparation",
+      "Families who prefer one clear admission process"
+    ],
+    "requirementsTitle": "Typical documents",
+    "requirements": [
+      "Passport / ID documents",
+      "Academic records and certificates",
+      "Photo and application documents",
+      "Any institution-specific requirements"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "scholarship-support",
+    "category": "education",
+    "title": "Scholarship Assistance",
+    "subtitle": "Education Consultancy",
+    "description": "Guidance for identifying suitable scholarship opportunities and preparing stronger applications.",
+    "images": [
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Opportunity Review",
+      "Application Help",
+      "Document Guidance"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 30,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Education & admission support"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Depends on institution and intake"
+      },
+      {
+        "label": "Application Window",
+        "value": "Confirmed during consultation"
+      },
+      {
+        "label": "Visa Support",
+        "value": "Available where applicable"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "Guidance for identifying suitable scholarship opportunities and preparing stronger applications.",
+    "recommendedTitle": "Best suited for",
+    "recommendedFor": [
+      "Students planning international study",
+      "Applicants who want guided document preparation",
+      "Families who prefer one clear admission process"
+    ],
+    "requirementsTitle": "Typical documents",
+    "requirements": [
+      "Passport / ID documents",
+      "Academic records and certificates",
+      "Photo and application documents",
+      "Any institution-specific requirements"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "language-program",
+    "category": "education",
+    "title": "Language Program Package",
+    "subtitle": "Study Preparation",
+    "description": "Support for international language-course applications and study preparation pathways.",
+    "images": [
+      "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Program Selection",
+      "Application Help",
+      "Study Guidance"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 40,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Education & admission support"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Depends on institution and intake"
+      },
+      {
+        "label": "Application Window",
+        "value": "Confirmed during consultation"
+      },
+      {
+        "label": "Visa Support",
+        "value": "Available where applicable"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "Support for international language-course applications and study preparation pathways.",
+    "recommendedTitle": "Best suited for",
+    "recommendedFor": [
+      "Students planning international study",
+      "Applicants who want guided document preparation",
+      "Families who prefer one clear admission process"
+    ],
+    "requirementsTitle": "Typical documents",
+    "requirements": [
+      "Passport / ID documents",
+      "Academic records and certificates",
+      "Photo and application documents",
+      "Any institution-specific requirements"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "turkey-tourist-visa",
+    "category": "travel",
+    "title": "Turkey Tourist Visa",
+    "subtitle": "Tourist Visa Service",
+    "description": "Professional document guidance and application support for Turkey tourist visa applicants.",
+    "images": [
+      "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Document Check",
+      "Visa Guidance",
+      "Application Support"
+    ],
+    "badge": "Featured",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 50,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Tourist / travel service"
+      },
+      {
+        "label": "Validity",
+        "value": "As issued by the relevant authority"
+      },
+      {
+        "label": "Stay Duration",
+        "value": "Depends on the issued visa/package"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Varies by destination and case"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "Professional document guidance and application support for Turkey tourist visa applicants.",
+    "recommendedTitle": "Who this service is for",
+    "recommendedFor": [
+      "Individuals planning leisure travel",
+      "Families needing coordinated travel support",
+      "Clients who want document guidance before submission"
+    ],
+    "requirementsTitle": "Typical requirements",
+    "requirements": [
+      "Passport / ID documents",
+      "Photo and travel documents",
+      "Supporting financial or travel documents where required",
+      "Destination-specific documents"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "dubai-tourist",
+    "category": "travel",
+    "title": "Dubai Tourist Package",
+    "subtitle": "Travel Package",
+    "description": "A convenient travel package combining visa assistance and planning support for Dubai trips.",
+    "images": [
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Visa Support",
+      "Trip Planning",
+      "Travel Assistance"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 60,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Tourist / travel service"
+      },
+      {
+        "label": "Validity",
+        "value": "As issued by the relevant authority"
+      },
+      {
+        "label": "Stay Duration",
+        "value": "Depends on the issued visa/package"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Varies by destination and case"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A convenient travel package combining visa assistance and planning support for Dubai trips.",
+    "recommendedTitle": "Who this service is for",
+    "recommendedFor": [
+      "Individuals planning leisure travel",
+      "Families needing coordinated travel support",
+      "Clients who want document guidance before submission"
+    ],
+    "requirementsTitle": "Typical requirements",
+    "requirements": [
+      "Passport / ID documents",
+      "Photo and travel documents",
+      "Supporting financial or travel documents where required",
+      "Destination-specific documents"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "family-travel",
+    "category": "travel",
+    "title": "Family Travel Package",
+    "subtitle": "Family Travel",
+    "description": "Coordinated travel support for families who want one clear process for their journey.",
+    "images": [
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Family Support",
+      "Travel Planning",
+      "Document Guidance"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 70,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Tourist / travel service"
+      },
+      {
+        "label": "Validity",
+        "value": "As issued by the relevant authority"
+      },
+      {
+        "label": "Stay Duration",
+        "value": "Depends on the issued visa/package"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Varies by destination and case"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "Coordinated travel support for families who want one clear process for their journey.",
+    "recommendedTitle": "Who this service is for",
+    "recommendedFor": [
+      "Individuals planning leisure travel",
+      "Families needing coordinated travel support",
+      "Clients who want document guidance before submission"
+    ],
+    "requirementsTitle": "Typical requirements",
+    "requirements": [
+      "Passport / ID documents",
+      "Photo and travel documents",
+      "Supporting financial or travel documents where required",
+      "Destination-specific documents"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "air-ticket",
+    "category": "travel",
+    "title": "Air Ticket Service",
+    "subtitle": "Flight & Ticketing",
+    "description": "Flight-search and ticketing assistance built around your destination, schedule and travel plan.",
+    "images": [
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Flight Options",
+      "Ticket Support",
+      "Travel Assistance"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 80,
+    "details": [
+      {
+        "label": "Service Type",
+        "value": "Tourist / travel service"
+      },
+      {
+        "label": "Validity",
+        "value": "As issued by the relevant authority"
+      },
+      {
+        "label": "Stay Duration",
+        "value": "Depends on the issued visa/package"
+      },
+      {
+        "label": "Processing Time",
+        "value": "Varies by destination and case"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "Flight-search and ticketing assistance built around your destination, schedule and travel plan.",
+    "recommendedTitle": "Who this service is for",
+    "recommendedFor": [
+      "Individuals planning leisure travel",
+      "Families needing coordinated travel support",
+      "Clients who want document guidance before submission"
+    ],
+    "requirementsTitle": "Typical requirements",
+    "requirements": [
+      "Passport / ID documents",
+      "Photo and travel documents",
+      "Supporting financial or travel documents where required",
+      "Destination-specific documents"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "smart-gold",
+    "category": "technology",
+    "title": "Smart Gold",
+    "subtitle": "Gold & Jewelry Management",
+    "description": "A ready-made business system for gold shops with sales, purchases, inventory, ledgers and reporting.",
+    "images": [
+      "https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Inventory",
+      "Sales & Purchases",
+      "Financial Reports"
+    ],
+    "badge": "Ready System",
+    "priceLabel": "Request a Quote",
+    "visible": true,
+    "sortOrder": 90,
+    "details": [
+      {
+        "label": "Product Type",
+        "value": "Business software solution"
+      },
+      {
+        "label": "Platform",
+        "value": "Web-ready application"
+      },
+      {
+        "label": "Deployment",
+        "value": "Local or hosted setup"
+      },
+      {
+        "label": "Support",
+        "value": "Setup, training and support"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A ready-made business system for gold shops with sales, purchases, inventory, ledgers and reporting.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses replacing manual records",
+      "Teams needing better reporting and control",
+      "Organizations wanting a tailored management system"
+    ],
+    "requirementsTitle": "Core capabilities",
+    "requirements": [
+      "Operational records",
+      "User access and workflows",
+      "Reporting and dashboards",
+      "Deployment and support"
+    ],
+    "actionLabel": "Request a Consultation",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "pharmacy-erp",
+    "category": "technology",
+    "title": "Pharmacy ERP",
+    "subtitle": "Pharmacy Management",
+    "description": "A complete pharmacy-management solution for stock, purchasing, sales, customers and reporting.",
+    "images": [
+      "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Medicine Stock",
+      "Billing",
+      "Supplier Management"
+    ],
+    "badge": "",
+    "priceLabel": "Request a Quote",
+    "visible": true,
+    "sortOrder": 100,
+    "details": [
+      {
+        "label": "Product Type",
+        "value": "Business software solution"
+      },
+      {
+        "label": "Platform",
+        "value": "Web-ready application"
+      },
+      {
+        "label": "Deployment",
+        "value": "Local or hosted setup"
+      },
+      {
+        "label": "Support",
+        "value": "Setup, training and support"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A complete pharmacy-management solution for stock, purchasing, sales, customers and reporting.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses replacing manual records",
+      "Teams needing better reporting and control",
+      "Organizations wanting a tailored management system"
+    ],
+    "requirementsTitle": "Core capabilities",
+    "requirements": [
+      "Operational records",
+      "User access and workflows",
+      "Reporting and dashboards",
+      "Deployment and support"
+    ],
+    "actionLabel": "Request a Consultation",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "hospital-management",
+    "category": "technology",
+    "title": "Hospital Management System",
+    "subtitle": "Healthcare Software",
+    "description": "A modular system for hospital operations, patient records, departments, billing and management.",
+    "images": [
+      "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Patient Records",
+      "Departments",
+      "Billing & Reports"
+    ],
+    "badge": "",
+    "priceLabel": "Request a Quote",
+    "visible": true,
+    "sortOrder": 110,
+    "details": [
+      {
+        "label": "Product Type",
+        "value": "Business software solution"
+      },
+      {
+        "label": "Platform",
+        "value": "Web-ready application"
+      },
+      {
+        "label": "Deployment",
+        "value": "Local or hosted setup"
+      },
+      {
+        "label": "Support",
+        "value": "Setup, training and support"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A modular system for hospital operations, patient records, departments, billing and management.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses replacing manual records",
+      "Teams needing better reporting and control",
+      "Organizations wanting a tailored management system"
+    ],
+    "requirementsTitle": "Core capabilities",
+    "requirements": [
+      "Operational records",
+      "User access and workflows",
+      "Reporting and dashboards",
+      "Deployment and support"
+    ],
+    "actionLabel": "Request a Consultation",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "restaurant-system",
+    "category": "technology",
+    "title": "Restaurant Management System",
+    "subtitle": "Restaurant Software",
+    "description": "A ready business system for orders, tables, stock, kitchen workflow and financial reporting.",
+    "images": [
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Orders",
+      "Inventory",
+      "Reports"
+    ],
+    "badge": "",
+    "priceLabel": "Request a Quote",
+    "visible": true,
+    "sortOrder": 120,
+    "details": [
+      {
+        "label": "Product Type",
+        "value": "Business software solution"
+      },
+      {
+        "label": "Platform",
+        "value": "Web-ready application"
+      },
+      {
+        "label": "Deployment",
+        "value": "Local or hosted setup"
+      },
+      {
+        "label": "Support",
+        "value": "Setup, training and support"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A ready business system for orders, tables, stock, kitchen workflow and financial reporting.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses replacing manual records",
+      "Teams needing better reporting and control",
+      "Organizations wanting a tailored management system"
+    ],
+    "requirementsTitle": "Core capabilities",
+    "requirements": [
+      "Operational records",
+      "User access and workflows",
+      "Reporting and dashboards",
+      "Deployment and support"
+    ],
+    "actionLabel": "Request a Consultation",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "social-media",
+    "category": "media",
+    "title": "Social Media Package",
+    "subtitle": "Digital Marketing",
+    "description": "A consistent social-media package with creative content, design and campaign support for brands.",
+    "images": [
+      "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Content Design",
+      "Campaign Support",
+      "Brand Consistency"
+    ],
+    "badge": "Popular",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 130,
+    "details": [
+      {
+        "label": "Package Type",
+        "value": "Creative media service"
+      },
+      {
+        "label": "Delivery Time",
+        "value": "Defined by package scope"
+      },
+      {
+        "label": "Revisions",
+        "value": "Defined during project confirmation"
+      },
+      {
+        "label": "Platforms",
+        "value": "Digital and social channels"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A consistent social-media package with creative content, design and campaign support for brands.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses building a stronger brand presence",
+      "Campaigns that need consistent creative output",
+      "Companies launching new products or services"
+    ],
+    "requirementsTitle": "What can be included",
+    "requirements": [
+      "Creative direction",
+      "Brand-aligned production",
+      "Platform-ready exports",
+      "Campaign or publishing support"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "branding-package",
+    "category": "media",
+    "title": "Branding Package",
+    "subtitle": "Brand Identity",
+    "description": "A professional identity package for companies that need a stronger and more consistent visual presence.",
+    "images": [
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Brand Direction",
+      "Visual Identity",
+      "Design Assets"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 140,
+    "details": [
+      {
+        "label": "Package Type",
+        "value": "Creative media service"
+      },
+      {
+        "label": "Delivery Time",
+        "value": "Defined by package scope"
+      },
+      {
+        "label": "Revisions",
+        "value": "Defined during project confirmation"
+      },
+      {
+        "label": "Platforms",
+        "value": "Digital and social channels"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A professional identity package for companies that need a stronger and more consistent visual presence.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses building a stronger brand presence",
+      "Campaigns that need consistent creative output",
+      "Companies launching new products or services"
+    ],
+    "requirementsTitle": "What can be included",
+    "requirements": [
+      "Creative direction",
+      "Brand-aligned production",
+      "Platform-ready exports",
+      "Campaign or publishing support"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "video-production",
+    "category": "media",
+    "title": "Video Production Package",
+    "subtitle": "Media Production",
+    "description": "Production support for promotional, corporate and social video content designed around your message.",
+    "images": [
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Production",
+      "Editing",
+      "Creative Direction"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 150,
+    "details": [
+      {
+        "label": "Package Type",
+        "value": "Creative media service"
+      },
+      {
+        "label": "Delivery Time",
+        "value": "Defined by package scope"
+      },
+      {
+        "label": "Revisions",
+        "value": "Defined during project confirmation"
+      },
+      {
+        "label": "Platforms",
+        "value": "Digital and social channels"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "Production support for promotional, corporate and social video content designed around your message.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses building a stronger brand presence",
+      "Campaigns that need consistent creative output",
+      "Companies launching new products or services"
+    ],
+    "requirementsTitle": "What can be included",
+    "requirements": [
+      "Creative direction",
+      "Brand-aligned production",
+      "Platform-ready exports",
+      "Campaign or publishing support"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  },
+  {
+    "id": "ad-campaign",
+    "category": "media",
+    "title": "Advertising Campaign Package",
+    "subtitle": "Advertising",
+    "description": "A coordinated campaign package for businesses that want stronger reach, visuals and promotion.",
+    "images": [
+      "https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=1200&q=84",
+      "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=88",
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1600&q=88"
+    ],
+    "features": [
+      "Campaign Creative",
+      "Ad Content",
+      "Promotion Support"
+    ],
+    "badge": "",
+    "priceLabel": "Contact for Price",
+    "visible": true,
+    "sortOrder": 160,
+    "details": [
+      {
+        "label": "Package Type",
+        "value": "Creative media service"
+      },
+      {
+        "label": "Delivery Time",
+        "value": "Defined by package scope"
+      },
+      {
+        "label": "Revisions",
+        "value": "Defined during project confirmation"
+      },
+      {
+        "label": "Platforms",
+        "value": "Digital and social channels"
+      }
+    ],
+    "sectionTitle": "About this product",
+    "sectionBody": "A coordinated campaign package for businesses that want stronger reach, visuals and promotion.",
+    "recommendedTitle": "Recommended for",
+    "recommendedFor": [
+      "Businesses building a stronger brand presence",
+      "Campaigns that need consistent creative output",
+      "Companies launching new products or services"
+    ],
+    "requirementsTitle": "What can be included",
+    "requirements": [
+      "Creative direction",
+      "Brand-aligned production",
+      "Platform-ready exports",
+      "Campaign or publishing support"
+    ],
+    "actionLabel": "Start an Inquiry",
+    "secondaryLabel": "",
+    "secondaryHref": ""
+  }
+]

@@ -1,0 +1,6 @@
+export type ContactDivision = { id:string; label:string; title:string; text:string; visible:boolean; sortOrder:number }
+export type ContactSettings = { heroKicker:string; heroTitle:string; heroHighlight:string; heroText:string; phone:string; email:string; whatsapp:string; office:string; workingHours:string; infoTitle:string; infoText:string; mapTitle:string; mapText:string; mapEmbedUrl:string; divisions:ContactDivision[] }
+export type ContactMessageInput = { name:string; phone:string; email:string; division:string; service:string; subject:string; message:string }
+export type ContactMessageRecord = ContactMessageInput & { id:string; status:'new'|'read'; createdAt:string; updatedAt:string }
+async function request<T>(path:string,options:RequestInit={}){const response=await fetch(path,{headers:{'Content-Type':'application/json',...(options.headers||{})},...options});const data=await response.json().catch(()=>({})) as Record<string,unknown>;if(!response.ok)throw new Error(typeof data.error==='string'?data.error:'Request failed.');return data as T}
+export const contactApi={ get:()=>request<{contact:ContactSettings}>('/api/contact'), send:(input:ContactMessageInput)=>request<{message:ContactMessageRecord}>('/api/contact/messages',{method:'POST',body:JSON.stringify(input)}) }

@@ -1,7 +1,16 @@
 import http, { type IncomingMessage, type ServerResponse } from 'node:http'
 import { URL } from 'node:url'
-import { adminCount, createInitialAdmin, createLocalUser, findAdminByEmail, findAdminById, findUserByEmail, findUserById, findUserByIdentifier, initDb, safeAdmin, safeUser, upsertGoogleUser } from './db.js'
+import { mkdir, writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import { createLocalUser, findUserByEmail, findUserById, findUserByIdentifier, initDb, safeUser, upsertGoogleUser } from './db.js'
 import { hashPassword, normalizeEmail, normalizePhone, parseCookies, signSession, validatePassword, verifyPassword, verifySession } from './auth.js'
+import { getConfiguredAdmin, verifyAdminCredentials } from './adminCredentials.js'
+import { createProduct, deleteProduct, getProduct, listProducts, updateProduct, type ProductInput } from './products.js'
+import { createService, deleteService, getService, listServices, updateService, type ServiceInput } from './services.js'
+import { createNews, deleteNews, getNews, listNews, updateNews, type NewsInput } from './news.js'
+import { createLeader, createStoryItem, deleteLeader, deleteStoryItem, getAbout, updateLeader, updateStoryItem, updateStorySettings, type LeadershipInput, type StoryItemInput, type StorySettingsInput } from './about.js'
+import { getContact, getAdminContact, updateContact, type ContactSettings } from './contact.js'
+import { createMessage, deleteMessage, listMessages, setMessageStatus, type ContactMessageInput } from './messages.js'
 
 const port = Number(process.env.PORT || 3001)
 const sessionSecret = process.env.SESSION_SECRET || ''
@@ -52,8 +61,66 @@ async function currentAdmin(req: IncomingMessage) {
   const token = parseCookies(req.headers.cookie).ap_admin_session
   if (!token) return null
   const session = verifySession(token, sessionSecret)
-  if (!session || session.scope !== 'admin') return null
-  return findAdminById(session.userId)
+  if (!session || session.scope !== 'admin' || session.userId !== 1) return null
+  return getConfiguredAdmin()
+}
+
+
+function decodeProductImageUpload(fileName: string, dataUrl: string) {
+  const match = /^data:(image\/(?:png|jpeg|webp|gif));base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl)
+  if (!match) throw new Error('Please upload a PNG, JPG, WEBP or GIF image.')
+  const extensionMap: Record<string, string> = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif' }
+  const extension = extensionMap[match[1]]
+  const baseName = path.basename(fileName, path.extname(fileName)).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'product'
+  const buffer = Buffer.from(match[2], 'base64')
+  if (!buffer.length || buffer.length > 8 * 1024 * 1024) throw new Error('Product image must be smaller than 8 MB.')
+  return { buffer, fileName: `${baseName}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${extension}` }
+}
+
+
+function decodeServiceImageUpload(fileName: string, dataUrl: string) {
+  const match = /^data:(image\/(?:png|jpeg|webp|gif));base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl)
+  if (!match) throw new Error('Please upload a PNG, JPG, WEBP or GIF image.')
+  const extensionMap: Record<string, string> = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif' }
+  const extension = extensionMap[match[1]]
+  const baseName = path.basename(fileName, path.extname(fileName)).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'service'
+  const buffer = Buffer.from(match[2], 'base64')
+  if (!buffer.length || buffer.length > 8 * 1024 * 1024) throw new Error('Service image must be smaller than 8 MB.')
+  return { buffer, fileName: `${baseName}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${extension}` }
+}
+
+
+
+function decodeNewsImageUpload(fileName: string, dataUrl: string) {
+  const match = /^data:(image\/(?:png|jpeg|webp|gif));base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl)
+  if (!match) throw new Error('Please upload a PNG, JPG, WEBP or GIF image.')
+  const extensionMap: Record<string, string> = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif' }
+  const extension = extensionMap[match[1]]
+  const baseName = path.basename(fileName, path.extname(fileName)).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'news'
+  const buffer = Buffer.from(match[2], 'base64')
+  if (!buffer.length || buffer.length > 8 * 1024 * 1024) throw new Error('News image must be smaller than 8 MB.')
+  return { buffer, fileName: `${baseName}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${extension}` }
+}
+
+
+function decodeLeaderImageUpload(fileName: string, dataUrl: string) {
+  const match = /^data:(image\/(?:png|jpeg|webp|gif));base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl)
+  if (!match) throw new Error('Please upload a PNG, JPG, WEBP or GIF image.')
+  const extensionMap: Record<string, string> = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif' }
+  const extension = extensionMap[match[1]]
+  const baseName = path.basename(fileName, path.extname(fileName)).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'leader'
+  const buffer = Buffer.from(match[2], 'base64')
+  if (!buffer.length || buffer.length > 8 * 1024 * 1024) throw new Error('Leader photo must be smaller than 8 MB.')
+  return { buffer, fileName: `${baseName}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${extension}` }
+}
+
+async function requireAdmin(req: IncomingMessage, res: ServerResponse) {
+  const admin = await currentAdmin(req)
+  if (!admin) {
+    send(res, 401, { error: 'Administrator login required.' })
+    return null
+  }
+  return admin
 }
 
 async function handleGoogleCredential(credential: string) {
@@ -76,39 +143,351 @@ async function route(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || '/', 'http://localhost')
   if (req.method === 'GET' && url.pathname === '/api/health') return send(res, 200, { ok: true })
 
+
+  if (req.method === 'GET' && url.pathname === '/api/products') {
+    return send(res, 200, { products: await listProducts() })
+  }
+
+  const publicProductMatch = /^\/api\/products\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (req.method === 'GET' && publicProductMatch) {
+    const product = await getProduct(publicProductMatch[1])
+    if (!product) return send(res, 404, { error: 'Product not found.' })
+    return send(res, 200, { product })
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/products') {
+    if (!await requireAdmin(req, res)) return
+    return send(res, 200, { products: await listProducts({ includeHidden: true }) })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/products') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const product = await createProduct(await readJson(req) as ProductInput)
+      return send(res, 201, { product })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to create product.' })
+    }
+  }
+
+  const adminProductMatch = /^\/api\/admin\/products\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (adminProductMatch && req.method === 'PUT') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const product = await updateProduct(adminProductMatch[1], await readJson(req) as ProductInput)
+      if (!product) return send(res, 404, { error: 'Product not found.' })
+      return send(res, 200, { product })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to update product.' })
+    }
+  }
+
+  if (adminProductMatch && req.method === 'DELETE') {
+    if (!await requireAdmin(req, res)) return
+    const deleted = await deleteProduct(adminProductMatch[1])
+    if (!deleted) return send(res, 404, { error: 'Product not found.' })
+    return send(res, 200, { ok: true })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/uploads/product-image') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const body = await readJson(req) as Record<string, string>
+      const decoded = decodeProductImageUpload(body.fileName || 'product', body.dataUrl || '')
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'products')
+      await mkdir(uploadDir, { recursive: true })
+      await writeFile(path.join(uploadDir, decoded.fileName), decoded.buffer)
+      return send(res, 201, { url: `/uploads/products/${decoded.fileName}` })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to upload image.' })
+    }
+  }
+
+
+
+  if (req.method === 'GET' && url.pathname === '/api/services') {
+    return send(res, 200, { services: await listServices() })
+  }
+
+  const publicServiceMatch = /^\/api\/services\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (req.method === 'GET' && publicServiceMatch) {
+    const service = await getService(publicServiceMatch[1])
+    if (!service) return send(res, 404, { error: 'Service not found.' })
+    return send(res, 200, { service })
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/services') {
+    if (!await requireAdmin(req, res)) return
+    return send(res, 200, { services: await listServices({ includeHidden: true }) })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/services') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const service = await createService(await readJson(req) as ServiceInput)
+      return send(res, 201, { service })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to create service.' })
+    }
+  }
+
+  const adminServiceMatch = /^\/api\/admin\/services\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (adminServiceMatch && req.method === 'PUT') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const service = await updateService(adminServiceMatch[1], await readJson(req) as ServiceInput)
+      if (!service) return send(res, 404, { error: 'Service not found.' })
+      return send(res, 200, { service })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to update service.' })
+    }
+  }
+
+  if (adminServiceMatch && req.method === 'DELETE') {
+    if (!await requireAdmin(req, res)) return
+    const deleted = await deleteService(adminServiceMatch[1])
+    if (!deleted) return send(res, 404, { error: 'Service not found.' })
+    return send(res, 200, { ok: true })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/uploads/service-image') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const body = await readJson(req) as Record<string, string>
+      const decoded = decodeServiceImageUpload(body.fileName || 'service', body.dataUrl || '')
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'services')
+      await mkdir(uploadDir, { recursive: true })
+      await writeFile(path.join(uploadDir, decoded.fileName), decoded.buffer)
+      return send(res, 201, { url: `/uploads/services/${decoded.fileName}` })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to upload image.' })
+    }
+  }
+
+
+
+  if (req.method === 'GET' && url.pathname === '/api/news') {
+    return send(res, 200, { news: await listNews() })
+  }
+
+  const publicNewsMatch = /^\/api\/news\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (req.method === 'GET' && publicNewsMatch) {
+    const item = await getNews(publicNewsMatch[1])
+    if (!item) return send(res, 404, { error: 'News item not found.' })
+    return send(res, 200, { news: item })
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/news') {
+    if (!await requireAdmin(req, res)) return
+    return send(res, 200, { news: await listNews({ includeHidden: true }) })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/news') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const item = await createNews(await readJson(req) as NewsInput)
+      return send(res, 201, { news: item })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to create news item.' })
+    }
+  }
+
+  const adminNewsMatch = /^\/api\/admin\/news\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (adminNewsMatch && req.method === 'PUT') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const item = await updateNews(adminNewsMatch[1], await readJson(req) as NewsInput)
+      if (!item) return send(res, 404, { error: 'News item not found.' })
+      return send(res, 200, { news: item })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to update news item.' })
+    }
+  }
+
+  if (adminNewsMatch && req.method === 'DELETE') {
+    if (!await requireAdmin(req, res)) return
+    const deleted = await deleteNews(adminNewsMatch[1])
+    if (!deleted) return send(res, 404, { error: 'News item not found.' })
+    return send(res, 200, { ok: true })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/uploads/news-image') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const body = await readJson(req) as Record<string, string>
+      const decoded = decodeNewsImageUpload(body.fileName || 'news', body.dataUrl || '')
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'news')
+      await mkdir(uploadDir, { recursive: true })
+      await writeFile(path.join(uploadDir, decoded.fileName), decoded.buffer)
+      return send(res, 201, { url: `/uploads/news/${decoded.fileName}` })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to upload image.' })
+    }
+  }
+
+
+  if (req.method === 'GET' && url.pathname === '/api/about') {
+    return send(res, 200, { about: await getAbout() })
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/about') {
+    if (!await requireAdmin(req, res)) return
+    return send(res, 200, { about: await getAbout({ includeHidden: true }) })
+  }
+
+  if (req.method === 'PUT' && url.pathname === '/api/admin/about/story-settings') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const story = await updateStorySettings(await readJson(req) as StorySettingsInput)
+      return send(res, 200, { story })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to update story settings.' })
+    }
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/about/story-items') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const item = await createStoryItem(await readJson(req) as StoryItemInput)
+      return send(res, 201, { item })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to create story item.' })
+    }
+  }
+
+  const storyItemMatch = /^\/api\/admin\/about\/story-items\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (storyItemMatch && req.method === 'PUT') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const item = await updateStoryItem(storyItemMatch[1], await readJson(req) as StoryItemInput)
+      if (!item) return send(res, 404, { error: 'Story item not found.' })
+      return send(res, 200, { item })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to update story item.' })
+    }
+  }
+  if (storyItemMatch && req.method === 'DELETE') {
+    if (!await requireAdmin(req, res)) return
+    const deleted = await deleteStoryItem(storyItemMatch[1])
+    if (!deleted) return send(res, 404, { error: 'Story item not found.' })
+    return send(res, 200, { ok: true })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/about/leaders') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const leader = await createLeader(await readJson(req) as LeadershipInput)
+      return send(res, 201, { leader })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to create leader.' })
+    }
+  }
+
+  const leaderMatch = /^\/api\/admin\/about\/leaders\/([a-z0-9-]+)$/.exec(url.pathname)
+  if (leaderMatch && req.method === 'PUT') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const leader = await updateLeader(leaderMatch[1], await readJson(req) as LeadershipInput)
+      if (!leader) return send(res, 404, { error: 'Leader not found.' })
+      return send(res, 200, { leader })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to update leader.' })
+    }
+  }
+  if (leaderMatch && req.method === 'DELETE') {
+    if (!await requireAdmin(req, res)) return
+    const deleted = await deleteLeader(leaderMatch[1])
+    if (!deleted) return send(res, 404, { error: 'Leader not found.' })
+    return send(res, 200, { ok: true })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/admin/uploads/leader-image') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const body = await readJson(req) as Record<string, string>
+      const decoded = decodeLeaderImageUpload(body.fileName || 'leader', body.dataUrl || '')
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'leaders')
+      await mkdir(uploadDir, { recursive: true })
+      await writeFile(path.join(uploadDir, decoded.fileName), decoded.buffer)
+      return send(res, 201, { url: `/uploads/leaders/${decoded.fileName}` })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to upload leader photo.' })
+    }
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/contact') {
+    return send(res, 200, { contact: await getContact() })
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/contact/messages') {
+    try {
+      const message = await createMessage(await readJson(req) as ContactMessageInput)
+      return send(res, 201, { message })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to send message.' })
+    }
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/contact') {
+    if (!await requireAdmin(req, res)) return
+    return send(res, 200, { contact: await getAdminContact() })
+  }
+
+  if (req.method === 'PUT' && url.pathname === '/api/admin/contact') {
+    if (!await requireAdmin(req, res)) return
+    try {
+      const contact = await updateContact(await readJson(req) as ContactSettings)
+      return send(res, 200, { contact })
+    } catch (error) {
+      return send(res, 400, { error: error instanceof Error ? error.message : 'Unable to update contact settings.' })
+    }
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/admin/messages') {
+    if (!await requireAdmin(req, res)) return
+    return send(res, 200, { messages: await listMessages() })
+  }
+
+  const adminMessageMatch = /^\/api\/admin\/messages\/([a-f0-9-]+)$/.exec(url.pathname)
+  if (adminMessageMatch && req.method === 'PUT') {
+    if (!await requireAdmin(req, res)) return
+    const body = await readJson(req) as { status?: 'new' | 'read' }
+    if (body.status !== 'new' && body.status !== 'read') return send(res, 400, { error: 'Invalid message status.' })
+    const message = await setMessageStatus(adminMessageMatch[1], body.status)
+    if (!message) return send(res, 404, { error: 'Message not found.' })
+    return send(res, 200, { message })
+  }
+  if (adminMessageMatch && req.method === 'DELETE') {
+    if (!await requireAdmin(req, res)) return
+    const deleted = await deleteMessage(adminMessageMatch[1])
+    if (!deleted) return send(res, 404, { error: 'Message not found.' })
+    return send(res, 200, { ok: true })
+  }
+
   if (req.method === 'GET' && url.pathname === '/api/admin/setup-status') {
-    const configured = (await adminCount()) > 0
-    return send(res, 200, { configured })
+    getConfiguredAdmin()
+    return send(res, 200, { configured: true })
   }
 
   if (req.method === 'POST' && url.pathname === '/api/admin/setup') {
-    if ((await adminCount()) > 0) return send(res, 409, { error: 'Admin setup is already complete.' })
-    const body = await readJson(req) as Record<string, string>
-    const email = normalizeEmail(body.email || '')
-    const password = body.password || ''
-    if (!/^\S+@\S+\.\S+$/.test(email)) return send(res, 400, { error: 'Please enter a valid admin email.' })
-    if (!validatePassword(password)) return send(res, 400, { error: 'Password must be at least 8 characters and include a letter and number.' })
-    const admin = await createInitialAdmin({ email, passwordHash: await hashPassword(password) })
-    if (!admin) return send(res, 409, { error: 'Admin setup is already complete.' })
-    const token = signSession({ userId: admin.id, scope: 'admin' }, sessionSecret, 60 * 60 * 12)
-    return send(res, 201, { admin: safeAdmin(admin) }, { 'Set-Cookie': adminSessionCookie(token) })
+    return send(res, 410, { error: 'Admin setup is disabled. Use the configured admin account.' })
   }
 
   if (req.method === 'POST' && url.pathname === '/api/admin/login') {
     const body = await readJson(req) as Record<string, string>
-    const email = normalizeEmail(body.email || '')
+    const email = body.email || ''
     const password = body.password || ''
-    const admin = await findAdminByEmail(email)
-    if (!admin || !(await verifyPassword(password, admin.passwordHash))) {
+    if (!verifyAdminCredentials(email, password)) {
       return send(res, 401, { error: 'Admin email or password is incorrect.' })
     }
+    const admin = getConfiguredAdmin()
     const token = signSession({ userId: admin.id, scope: 'admin' }, sessionSecret, 60 * 60 * 12)
-    return send(res, 200, { admin: safeAdmin(admin) }, { 'Set-Cookie': adminSessionCookie(token) })
+    return send(res, 200, { admin }, { 'Set-Cookie': adminSessionCookie(token) })
   }
 
   if (req.method === 'GET' && url.pathname === '/api/admin/me') {
     const admin = await currentAdmin(req)
-    return send(res, 200, { admin: admin ? safeAdmin(admin) : null })
+    return send(res, 200, { admin })
   }
 
   if (req.method === 'POST' && url.pathname === '/api/admin/logout') {
@@ -165,7 +544,13 @@ async function route(req: IncomingMessage, res: ServerResponse) {
   return send(res, 404, { error: 'Not found' })
 }
 
-await initDb()
+try {
+  await initDb()
+} catch (error) {
+  console.warn('Database is unavailable. Public authentication will remain unavailable until PostgreSQL is configured.')
+  if (!isProduction) console.warn(error)
+}
+
 http.createServer((req, res) => {
   route(req, res).catch((error) => {
     console.error(error)

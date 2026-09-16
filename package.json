@@ -7,9 +7,14 @@
     "dev": "vite",
     "build": "tsc && vite build && tsc -p tsconfig.server.json",
     "preview": "vite preview",
-    "dev:api": "tsx --env-file=.env watch server/index.ts",
+    "dev:api": "tsx watch --env-file=.env server/index.ts",
     "start:api": "node --env-file=.env server-dist/index.js",
-    "test:auth": "tsx --test server/auth.test.ts"
+    "test:auth": "tsx --test server/auth.test.ts",
+    "test:products": "tsx --test server/products.test.ts",
+    "test:services": "tsx --test server/services.test.ts",
+    "test:news": "tsx --test server/news.test.ts",
+    "test:about": "tsx --test server/about.test.ts",
+    "test:contact": "tsx --test server/contact.test.ts server/messages.test.ts"
   },
   "dependencies": {
     "lucide-react": "0.263.1",

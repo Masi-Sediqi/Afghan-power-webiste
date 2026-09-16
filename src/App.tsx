@@ -48,6 +48,7 @@ import NewsPage from './News'
 import GoogleSignIn from './components/GoogleSignIn'
 import { authApi, type AuthUser } from './auth'
 import AdminApp from './AdminApp'
+import { servicesApi, type ServiceRecord } from './servicesApi'
 
 const services = [
   {
@@ -225,6 +226,7 @@ function PublicSite() {
   const [accountError, setAccountError] = useState('')
   const [scrolled, setScrolled] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
+  const [homeServices, setHomeServices] = useState<ServiceRecord[]>([])
   const [route, setRoute] = useState(() => window.location.hash)
   const productRouteSegment = route.split('/')[2] || ''
   const productCategoryRoutes = ['education', 'travel', 'tech', 'technology', 'media']
@@ -256,14 +258,20 @@ function PublicSite() {
   }, [])
 
   useEffect(() => {
+    let active = true
+    servicesApi.list().then((result) => { if (active) setHomeServices(result.services) }).catch(() => { if (active) setHomeServices([]) })
+    return () => { active = false }
+  }, [])
+
+  useEffect(() => {
     if (route.startsWith('#/')) {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
     }
+  }, [route])
 
-    const revealNodes = Array.from(document.querySelectorAll<HTMLElement>('.reveal'))
-
+  useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
-      revealNodes.forEach((node) => node.classList.add('is-visible'))
+      document.querySelectorAll<HTMLElement>('.reveal').forEach((node) => node.classList.add('is-visible'))
       return
     }
 
@@ -271,17 +279,44 @@ function PublicSite() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible')
-            observer.unobserve(entry.target)
+            const node = entry.target as HTMLElement
+            node.classList.add('is-visible')
+            node.removeAttribute('data-reveal-bound')
+            observer.unobserve(node)
           }
         })
       },
-      { threshold: 0.14 },
+      { threshold: 0.12, rootMargin: '0px 0px -4% 0px' },
     )
 
-    revealNodes.forEach((node) => observer.observe(node))
-    return () => observer.disconnect()
-  }, [route])
+    const bindRevealNode = (node: HTMLElement) => {
+      if (node.classList.contains('is-visible') || node.dataset.revealBound === 'true') return
+      node.dataset.revealBound = 'true'
+      observer.observe(node)
+    }
+
+    const bindRevealTree = (rootNode: ParentNode) => {
+      if (rootNode instanceof HTMLElement && rootNode.matches('.reveal')) bindRevealNode(rootNode)
+      rootNode.querySelectorAll<HTMLElement>('.reveal').forEach(bindRevealNode)
+    }
+
+    bindRevealTree(document)
+
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) bindRevealTree(node)
+        })
+      })
+    })
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      mutationObserver.disconnect()
+      observer.disconnect()
+      document.querySelectorAll<HTMLElement>('[data-reveal-bound]').forEach((node) => node.removeAttribute('data-reveal-bound'))
+    }
+  }, [])
 
   useEffect(() => {
     document.body.classList.toggle('account-modal-open', accountOpen)
@@ -598,23 +633,23 @@ function PublicSite() {
         </div>
         <div className="service-scroll-frame">
           <div className="service-grid">
-            {scrollingServices.map(({ category, title, text, image }, index) => {
-              const originalIndex = index % services.length
+            {[...homeServices, ...homeServices].map((service, index) => {
+              const originalIndex = homeServices.length ? index % homeServices.length : 0
               return (
                 <article
                   className="service-card"
-                  key={`${title}-${index}`}
+                  key={`${service.id}-${index}`}
                   style={{ '--service-delay': `${originalIndex * 90}ms` } as CSSProperties}
-                  aria-hidden={index >= services.length}
+                  aria-hidden={index >= homeServices.length}
                 >
                   <div className="service-image">
-                    <img src={image} alt="" loading="lazy" />
-                    <span className={`service-category service-category-${category.toLowerCase()}`}>{category}</span>
+                    <img src={service.image} alt="" loading="lazy" />
+                    <span className={`service-category service-category-${service.category}`}>{service.category.toUpperCase()}</span>
                   </div>
-                  <h3>{title}</h3>
-                  <p>{text}</p>
-                  <a href="#/contact" aria-label={`Learn more about ${title}`}>
-                    <span>Explore</span><ArrowRight size={18}/>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                  <a href={service.actionHref || '#/contact'} aria-label={`${service.actionLabel || 'Explore'} ${service.title}`}>
+                    <span>{service.actionLabel || 'Explore'}</span><ArrowRight size={18}/>
                   </a>
                 </article>
               )
