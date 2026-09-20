@@ -28,6 +28,8 @@ export type ProductRecord = ProductTextFields & {
   visible: boolean
   sortOrder: number
   secondaryHref: string
+  demoLink: string
+  youtubeVideoLink: string
   translations?: LocalizedFields<ProductTextFields>
   createdAt?: string
   updatedAt?: string

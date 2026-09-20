@@ -2314,3 +2314,14 @@ html[dir="rtl"] .chat-message.user { align-self: flex-start; border-bottom-right
 .admin-translation-panel>h4{margin:0 0 10px;font-size:13px;font-weight:900;color:#263844}
 .admin-translation-panel>div>h4{margin:12px 0 8px;font-size:12px;font-weight:900;color:#4b5f6b}
 .admin-translation-panel input[dir="rtl"],.admin-translation-panel textarea[dir="rtl"]{font-family:Vazirmatn,Manrope,sans-serif;text-align:right;direction:rtl}
+
+
+/* Product demo & YouTube showcase */
+.product-detail-demo{min-height:48px;padding:0 18px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;font-size:13px;font-weight:850;color:#fff;background:linear-gradient(105deg,#6d28d9,#8b5cf6 54%,#0c83e5);box-shadow:0 14px 35px rgba(109,40,217,.2);transition:transform .25s ease,box-shadow .25s ease}
+.product-detail-demo:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(109,40,217,.28)}
+.product-video-showcase{margin-top:72px;padding:34px;border-radius:32px;background:linear-gradient(145deg,rgba(8,18,30,.98),rgba(16,37,58,.97));box-shadow:0 28px 80px rgba(9,31,49,.18);overflow:hidden;position:relative}
+.product-video-showcase:before{content:"";position:absolute;width:360px;height:360px;border-radius:50%;right:-120px;top:-180px;background:radial-gradient(circle,rgba(29,145,255,.24),transparent 66%);pointer-events:none}
+.product-video-heading{display:flex;justify-content:space-between;gap:36px;align-items:flex-end;margin-bottom:24px;position:relative;z-index:1}.product-video-heading .detail-section-kicker{color:#62b7ff}.product-video-heading h2{margin:9px 0 0;color:#fff;font-size:clamp(30px,4vw,50px);letter-spacing:-.045em;line-height:1.05}.product-video-heading>p{max-width:430px;margin:0;color:#aab8c5;font-size:14px;line-height:1.7}
+.product-video-frame{position:relative;z-index:1;width:100%;aspect-ratio:16/9;border-radius:24px;overflow:hidden;background:#050a10;border:1px solid rgba(255,255,255,.12);box-shadow:0 22px 60px rgba(0,0,0,.35)}.product-video-frame iframe{width:100%;height:100%;border:0;display:block}
+html[data-theme="dark"] .product-detail-demo{box-shadow:0 14px 38px rgba(109,40,217,.3)}
+@media(max-width:700px){.product-video-showcase{margin-top:52px;padding:18px;border-radius:24px}.product-video-heading{align-items:flex-start;flex-direction:column;gap:12px}.product-video-heading h2{font-size:30px}.product-video-frame{border-radius:17px}}

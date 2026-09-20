@@ -245,7 +245,7 @@ const emptyProduct = (): ProductRecord => ({
   id: '', category: 'technology', title: '', subtitle: '', description: '', images: [], features: [], badge: '',
   priceLabel: 'Contact for Price', visible: true, sortOrder: 0, details: [], sectionTitle: 'About this product', sectionBody: '',
   recommendedTitle: 'Recommended for', recommendedFor: [], requirementsTitle: 'Information', requirements: [],
-  actionLabel: 'Request a Consultation', secondaryLabel: '', secondaryHref: '', translations: { fa: {}, ps: {} },
+  actionLabel: 'Request a Consultation', secondaryLabel: '', secondaryHref: '', demoLink: '', youtubeVideoLink: '', translations: { fa: {}, ps: {} },
 })
 
 const lines = (value: string) => value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean)
@@ -405,6 +405,8 @@ function ProductManager() {
             <section className="admin-form-section"><h3>Recommended & information</h3><div className="admin-form-grid"><label className="span-2"><span>Recommended title</span><input value={form.recommendedTitle} onChange={(e) => setForm({ ...form, recommendedTitle: e.target.value })}/></label><label className="span-2"><span>Recommended items · one per line</span><textarea value={recommendedText} onChange={(e) => setRecommendedText(e.target.value)} rows={4}/></label><label className="span-2"><span>Requirements / Information title</span><input value={form.requirementsTitle} onChange={(e) => setForm({ ...form, requirementsTitle: e.target.value })}/></label><label className="span-2"><span>Requirements / Information · one per line</span><textarea value={requirementsText} onChange={(e) => setRequirementsText(e.target.value)} rows={4}/></label></div></section>
 
             <section className="admin-form-section"><h3>Actions</h3><div className="admin-form-grid"><label><span>Primary action label *</span><input value={form.actionLabel} onChange={(e) => setForm({ ...form, actionLabel: e.target.value })} required/></label><label><span>Secondary action label</span><input value={form.secondaryLabel} onChange={(e) => setForm({ ...form, secondaryLabel: e.target.value })}/></label><label className="span-2"><span>Secondary action link</span><input value={form.secondaryHref} onChange={(e) => setForm({ ...form, secondaryHref: e.target.value })} placeholder="#contact or https://…"/></label></div></section>
+
+            <section className="admin-form-section"><h3>Demo & YouTube video</h3><p>Add a public demo URL and/or a YouTube video. Standard YouTube, youtu.be, Shorts and embed links are supported.</p><div className="admin-form-grid"><label className="span-2"><span>Demo Link</span><input type="url" value={form.demoLink} onChange={(e) => setForm({ ...form, demoLink: e.target.value })} placeholder="https://demo.example.com"/></label><label className="span-2"><span>YouTube Video Link</span><input type="url" value={form.youtubeVideoLink} onChange={(e) => setForm({ ...form, youtubeVideoLink: e.target.value })} placeholder="https://www.youtube.com/watch?v=..."/></label></div></section>
 
             <section className="admin-form-section"><h3>Translations · دری / پشتو</h3><p>Leave any field empty to fall back to English.</p>{(['fa','ps'] as TranslationLanguage[]).map((lang) => <div className="admin-translation-panel" key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid">
               <label className="span-2"><span>Title</span><input dir="rtl" value={translationValue(form,lang,'title')} onChange={(e)=>setForm(withTranslation(form,lang,{title:e.target.value}))}/></label>

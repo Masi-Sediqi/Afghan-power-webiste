@@ -12,6 +12,7 @@ import {
   FileText,
   GraduationCap,
   PlaneTakeoff,
+  Play,
   ShieldCheck,
   Sparkles,
   X,
@@ -24,6 +25,29 @@ const categoryMeta = {
   travel: { label: 'Travel', icon: PlaneTakeoff, className: 'travel' },
   technology: { label: 'Technology', icon: Database, className: 'technology' },
   media: { label: 'Media', icon: Clapperboard, className: 'media' },
+}
+
+
+function getYouTubeEmbedUrl(value: string) {
+  const raw = value.trim()
+  if (!raw) return ''
+  try {
+    const url = new URL(raw)
+    const host = url.hostname.replace(/^www\./, '').toLowerCase()
+    let videoId = ''
+    if (host === 'youtu.be') videoId = url.pathname.split('/').filter(Boolean)[0] || ''
+    else if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (url.pathname === '/watch') videoId = url.searchParams.get('v') || ''
+      else {
+        const parts = url.pathname.split('/').filter(Boolean)
+        if (['embed', 'shorts', 'live'].includes(parts[0])) videoId = parts[1] || ''
+      }
+    }
+    if (!/^[A-Za-z0-9_-]{6,}$/.test(videoId)) return ''
+    return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
+  } catch {
+    return ''
+  }
 }
 
 function DetailIcon({ category }: { category: ProductCategory }) {
@@ -85,6 +109,12 @@ export default function ProductDetailsPage({ productId }: { productId: string })
   const displayRelated = related.map((item) => localizeProduct(item, language))
   const meta = categoryMeta[displayProduct.category]
   const images = displayProduct.images.length ? displayProduct.images : ['/afghan-power-brand.png']
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(displayProduct.youtubeVideoLink || '')
+  const demoCopy = language === 'fa'
+    ? { liveDemo: 'دموی زنده', kicker: 'نمایش محصول', heading: `${displayProduct.title} را در عمل ببینید.`, body: 'نمای کلی محصول، رابط کاربری و روندهای اصلی را مستقیماً از یوتیوب تماشا کنید.' }
+    : language === 'ps'
+      ? { liveDemo: 'ژوندۍ ډیمو', kicker: 'د محصول ننداره', heading: `${displayProduct.title} په عمل کې وګورئ.`, body: 'د محصول عمومي بڼه، انټرفېس او مهم کاري بهیرونه مستقیماً په یوټیوب کې وګورئ.' }
+      : { liveDemo: 'Live Demo', kicker: 'PRODUCT DEMO', heading: `See ${displayProduct.title} in action.`, body: 'Watch the product overview, interface and key workflow directly from YouTube.' }
   const nextImage = (direction: number) => setActiveImage((current) => (current + direction + images.length) % images.length)
   const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
     if (Math.abs(event.deltaY) < 8 || images.length < 2) return
@@ -123,10 +153,21 @@ export default function ProductDetailsPage({ productId }: { productId: string })
           <div className="product-detail-actions">
             <a className="product-detail-primary" href={`mailto:info@afghanpower.com?subject=${encodeURIComponent(displayProduct.title)}`}>{displayProduct.actionLabel} <ArrowRight size={17} /></a>
             {displayProduct.secondaryLabel && <a className="product-detail-secondary" href={displayProduct.secondaryHref || '#contact'}>{displayProduct.secondaryLabel} <ExternalLink size={16} /></a>}
+            {displayProduct.demoLink && <a className="product-detail-demo" href={displayProduct.demoLink} target="_blank" rel="noreferrer"><Play size={16} fill="currentColor"/> {demoCopy.liveDemo} <ExternalLink size={15}/></a>}
           </div>
           <div className="product-detail-note"><ShieldCheck size={18} /><span>Final terms, timelines and requirements are confirmed during consultation before any application, booking or project starts.</span></div>
         </div>
       </section>
+
+      {youtubeEmbedUrl && <section className="product-video-showcase reveal">
+        <div className="product-video-heading">
+          <div><span className="detail-section-kicker"><Play size={15} fill="currentColor"/> {demoCopy.kicker}</span><h2>{demoCopy.heading}</h2></div>
+          <p>{demoCopy.body}</p>
+        </div>
+        <div className="product-video-frame">
+          <iframe src={youtubeEmbedUrl} title={`${displayProduct.title} video demo`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
+        </div>
+      </section>}
 
       <section className="product-detail-content">
         <article className="product-detail-description"><span className="detail-section-kicker"><FileText size={15} /> DETAILS</span><h2>{displayProduct.sectionTitle}</h2><p>{displayProduct.sectionBody}</p></article>
