@@ -86,8 +86,6 @@ const fa: Dictionary = {
   'CURATED CATALOG': 'کاتالوگ منتخب',
   'Technology Products': 'محصولات تکنالوژی',
   'Education Products': 'محصولات تحصیلی',
-  'Travel Products': 'محصولات سیاحتی',
-  'Media Products': 'محصولات رسانه‌ای',
   'No products found': 'محصولی پیدا نشد',
   'Try another keyword or category.': 'کلمه یا کتگوری دیگری را امتحان کنید.',
   'Show all products': 'نمایش همه محصولات',
