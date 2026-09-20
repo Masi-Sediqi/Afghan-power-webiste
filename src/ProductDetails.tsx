@@ -16,7 +16,8 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
-import { productsApi, type ProductCategory, type ProductRecord } from './productsApi'
+import { localizeProduct, productsApi, type ProductCategory, type ProductRecord } from './productsApi'
+import { useSiteLanguage } from './useSiteLanguage'
 
 const categoryMeta = {
   education: { label: 'Education', icon: GraduationCap, className: 'education' },
@@ -37,6 +38,7 @@ export default function ProductDetailsPage({ productId }: { productId: string })
   const [error, setError] = useState('')
   const [activeImage, setActiveImage] = useState(0)
   const [zoomOpen, setZoomOpen] = useState(false)
+  const language = useSiteLanguage()
 
   useEffect(() => {
     let active = true
@@ -79,8 +81,10 @@ export default function ProductDetailsPage({ productId }: { productId: string })
     )
   }
 
-  const meta = categoryMeta[product.category]
-  const images = product.images.length ? product.images : ['/afghan-power-brand.png']
+  const displayProduct = localizeProduct(product, language)
+  const displayRelated = related.map((item) => localizeProduct(item, language))
+  const meta = categoryMeta[displayProduct.category]
+  const images = displayProduct.images.length ? displayProduct.images : ['/afghan-power-brand.png']
   const nextImage = (direction: number) => setActiveImage((current) => (current + direction + images.length) % images.length)
   const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
     if (Math.abs(event.deltaY) < 8 || images.length < 2) return
@@ -90,13 +94,13 @@ export default function ProductDetailsPage({ productId }: { productId: string })
   return (
     <main className={`product-detail-page product-detail-${meta.className}`}>
       <div className="product-detail-breadcrumb">
-        <a href="#/products"><ArrowLeft size={16} /> Products</a><span>/</span><span>{meta.label}</span><span>/</span><strong>{product.title}</strong>
+        <a href="#/products"><ArrowLeft size={16} /> Products</a><span>/</span><span>{meta.label}</span><span>/</span><strong>{displayProduct.title}</strong>
       </div>
 
       <section className="product-detail-hero">
         <div className="product-gallery-sticky">
           <div className="product-gallery-main" onWheel={handleWheel} onClick={() => setZoomOpen(true)} role="button" tabIndex={0} aria-label="Zoom product image">
-            {images.map((image, index) => <img key={`${image}-${index}`} src={image} alt={`${product.title} view ${index + 1}`} className={index === activeImage ? 'active' : ''} />)}
+            {images.map((image, index) => <img key={`${image}-${index}`} src={image} alt={`${displayProduct.title} view ${index + 1}`} className={index === activeImage ? 'active' : ''} />)}
             <div className="product-gallery-count">{String(activeImage + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}</div>
             {images.length > 1 && <div className="product-gallery-controls">
               <button type="button" onClick={(event) => { event.stopPropagation(); nextImage(-1) }} aria-label="Previous image"><ChevronLeft /></button>
@@ -110,36 +114,36 @@ export default function ProductDetailsPage({ productId }: { productId: string })
         </div>
 
         <div className="product-detail-info">
-          <div className="product-detail-category"><DetailIcon category={product.category} /> {meta.label}</div>
-          <span className="product-detail-subtitle">{product.subtitle}</span>
-          <h1>{product.title}</h1>
-          <p className="product-detail-lead">{product.description}</p>
-          <div className="product-detail-highlights">{product.features.map((item) => <span key={item}><BadgeCheck size={15} /> {item}</span>)}</div>
-          <div className="product-detail-specs">{product.details.map((item) => <div key={`${item.label}-${item.value}`}><span>{item.label}</span><strong>{item.value}</strong></div>)}</div>
+          <div className="product-detail-category"><DetailIcon category={displayProduct.category} /> {meta.label}</div>
+          <span className="product-detail-subtitle">{displayProduct.subtitle}</span>
+          <h1>{displayProduct.title}</h1>
+          <p className="product-detail-lead">{displayProduct.description}</p>
+          <div className="product-detail-highlights">{displayProduct.features.map((item) => <span key={item}><BadgeCheck size={15} /> {item}</span>)}</div>
+          <div className="product-detail-specs">{displayProduct.details.map((item) => <div key={`${item.label}-${item.value}`}><span>{item.label}</span><strong>{item.value}</strong></div>)}</div>
           <div className="product-detail-actions">
-            <a className="product-detail-primary" href={`mailto:info@afghanpower.com?subject=${encodeURIComponent(product.title)}`}>{product.actionLabel} <ArrowRight size={17} /></a>
-            {product.secondaryLabel && <a className="product-detail-secondary" href={product.secondaryHref || '#contact'}>{product.secondaryLabel} <ExternalLink size={16} /></a>}
+            <a className="product-detail-primary" href={`mailto:info@afghanpower.com?subject=${encodeURIComponent(displayProduct.title)}`}>{displayProduct.actionLabel} <ArrowRight size={17} /></a>
+            {displayProduct.secondaryLabel && <a className="product-detail-secondary" href={displayProduct.secondaryHref || '#contact'}>{displayProduct.secondaryLabel} <ExternalLink size={16} /></a>}
           </div>
           <div className="product-detail-note"><ShieldCheck size={18} /><span>Final terms, timelines and requirements are confirmed during consultation before any application, booking or project starts.</span></div>
         </div>
       </section>
 
       <section className="product-detail-content">
-        <article className="product-detail-description"><span className="detail-section-kicker"><FileText size={15} /> DETAILS</span><h2>{product.sectionTitle}</h2><p>{product.sectionBody}</p></article>
+        <article className="product-detail-description"><span className="detail-section-kicker"><FileText size={15} /> DETAILS</span><h2>{displayProduct.sectionTitle}</h2><p>{displayProduct.sectionBody}</p></article>
         <div className="product-detail-columns">
-          <article><span className="detail-section-kicker"><Sparkles size={15} /> RECOMMENDED</span><h3>{product.recommendedTitle}</h3><ul>{product.recommendedFor.map((item) => <li key={item}><BadgeCheck size={16} /> {item}</li>)}</ul></article>
-          <article><span className="detail-section-kicker"><Clock3 size={15} /> INFORMATION</span><h3>{product.requirementsTitle}</h3><ul>{product.requirements.map((item) => <li key={item}><BadgeCheck size={16} /> {item}</li>)}</ul></article>
+          <article><span className="detail-section-kicker"><Sparkles size={15} /> RECOMMENDED</span><h3>{displayProduct.recommendedTitle}</h3><ul>{displayProduct.recommendedFor.map((item) => <li key={item}><BadgeCheck size={16} /> {item}</li>)}</ul></article>
+          <article><span className="detail-section-kicker"><Clock3 size={15} /> INFORMATION</span><h3>{displayProduct.requirementsTitle}</h3><ul>{displayProduct.requirements.map((item) => <li key={item}><BadgeCheck size={16} /> {item}</li>)}</ul></article>
         </div>
       </section>
 
       {zoomOpen && <div className="product-image-lightbox" onClick={() => setZoomOpen(false)} role="dialog" aria-modal="true" aria-label="Product image preview">
         <button type="button" className="product-lightbox-close" onClick={() => setZoomOpen(false)} aria-label="Close image preview"><X size={22} /></button>
-        <img src={images[activeImage]} alt={`${product.title} enlarged view`} onClick={(event) => event.stopPropagation()} />
+        <img src={images[activeImage]} alt={`${displayProduct.title} enlarged view`} onClick={(event) => event.stopPropagation()} />
       </div>}
 
-      {related.length > 0 && <section className="related-products">
-        <div className="related-products-head"><div><span>YOU MAY ALSO LIKE</span><h2>Related {meta.label} products</h2></div><a href={`#/products/${product.category === 'technology' ? 'tech' : product.category}`}>View all <ArrowRight size={16} /></a></div>
-        <div className="related-products-grid">{related.map((item) => <a href={`#/products/${item.id}`} className="related-product-card" key={item.id}>
+      {displayRelated.length > 0 && <section className="related-products">
+        <div className="related-products-head"><div><span>YOU MAY ALSO LIKE</span><h2>Related {meta.label} products</h2></div><a href={`#/products/${displayProduct.category === 'technology' ? 'tech' : displayProduct.category}`}>View all <ArrowRight size={16} /></a></div>
+        <div className="related-products-grid">{displayRelated.map((item) => <a href={`#/products/${item.id}`} className="related-product-card" key={item.id}>
           <img src={item.images[0]} alt="" loading="lazy" /><div><span>{categoryMeta[item.category].label}</span><h3>{item.title}</h3><p>{item.subtitle}</p></div><ArrowRight size={18} />
         </a>)}</div>
       </section>}

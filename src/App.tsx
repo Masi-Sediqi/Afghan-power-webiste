@@ -48,7 +48,8 @@ import NewsPage from './News'
 import GoogleSignIn from './components/GoogleSignIn'
 import { authApi, type AuthUser } from './auth'
 import AdminApp from './AdminApp'
-import { servicesApi, type ServiceRecord } from './servicesApi'
+import { localizeService, servicesApi, type ServiceRecord } from './servicesApi'
+import { useSiteLanguage } from './useSiteLanguage'
 
 const services = [
   {
@@ -213,6 +214,7 @@ function GoogleIcon() {
 }
 
 function PublicSite() {
+  const language = useSiteLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
   const [accountMode, setAccountMode] = useState<'signin' | 'signup'>('signin')
@@ -259,9 +261,9 @@ function PublicSite() {
 
   useEffect(() => {
     let active = true
-    servicesApi.list().then((result) => { if (active) setHomeServices(result.services) }).catch(() => { if (active) setHomeServices([]) })
+    servicesApi.list().then((result) => { if (active) setHomeServices(result.services.map((item) => localizeService(item, language))) }).catch(() => { if (active) setHomeServices([]) })
     return () => { active = false }
-  }, [])
+  }, [language])
 
   useEffect(() => {
     if (route.startsWith('#/')) {

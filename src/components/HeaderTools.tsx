@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Bell, Check, Languages, Moon, Search, Sun, Trash2, X } from 'lucide-react'
-
-type LangCode = 'en' | 'fa' | 'ps'
+import { getSavedLanguage, setSiteLanguage, type LangCode } from '../i18n'
 
 type Props = {
   onLanguageChange?: (lang: LangCode) => void
@@ -29,12 +28,17 @@ export default function HeaderTools({ onLanguageChange }: Props) {
   )
   const [languageOpen, setLanguageOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
-  const [language, setLanguage] = useState<LangCode>('en')
+  const [language, setLanguage] = useState<LangCode>(() => getSavedLanguage())
   const searchInput = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
   }, [theme])
+
+  useEffect(() => {
+    setSiteLanguage(language)
+    onLanguageChange?.(language)
+  }, [language, onLanguageChange])
 
   useEffect(() => {
     if (!searchOpen) return
@@ -73,9 +77,7 @@ export default function HeaderTools({ onLanguageChange }: Props) {
     const selected = languages.find((item) => item.code === code)!
     setLanguage(code)
     setLanguageOpen(false)
-    document.documentElement.lang = code
-    document.documentElement.dir = selected.dir
-    document.documentElement.dataset.language = code
+    setSiteLanguage(code)
     onLanguageChange?.(code)
   }
 

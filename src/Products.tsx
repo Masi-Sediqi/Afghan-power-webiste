@@ -11,7 +11,8 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
-import { productsApi, type ProductCategory, type ProductRecord } from './productsApi'
+import { localizeProduct, productsApi, type ProductCategory, type ProductRecord } from './productsApi'
+import { useSiteLanguage } from './useSiteLanguage'
 
 type ProductFilter = 'all' | ProductCategory
 
@@ -44,6 +45,8 @@ export default function ProductsPage({ route = '#/products' }: ProductsPageProps
   const [error, setError] = useState('')
   const [activeFilter, setActiveFilter] = useState<ProductFilter>(() => getFilterFromRoute(route))
   const [searchTerm, setSearchTerm] = useState('')
+  const language = useSiteLanguage()
+  const localizedProducts = useMemo(() => products.map((product) => localizeProduct(product, language)), [products, language])
 
   const loadProducts = async () => {
     setLoading(true)
@@ -63,7 +66,7 @@ export default function ProductsPage({ route = '#/products' }: ProductsPageProps
 
   const visibleProducts = useMemo(() => {
     const normalizedQuery = searchTerm.trim().toLowerCase()
-    return products.filter((product) => {
+    return localizedProducts.filter((product) => {
       const matchesCategory = activeFilter === 'all' || product.category === activeFilter
       const searchableText = [
         product.title,
@@ -74,7 +77,7 @@ export default function ProductsPage({ route = '#/products' }: ProductsPageProps
       ].join(' ').toLowerCase()
       return matchesCategory && (!normalizedQuery || searchableText.includes(normalizedQuery))
     })
-  }, [activeFilter, products, searchTerm])
+  }, [activeFilter, localizedProducts, searchTerm])
 
   return (
     <main className="products-page" aria-labelledby="products-page-title">

@@ -1,6 +1,7 @@
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { ArrowRight, Search, Sparkles } from 'lucide-react'
-import { servicesApi, type ServiceCategory, type ServiceRecord } from './servicesApi'
+import { localizeService, servicesApi, type ServiceCategory, type ServiceRecord } from './servicesApi'
+import { useSiteLanguage } from './useSiteLanguage'
 
 type Filter = 'All Services' | 'Education' | 'Travel' | 'Technology' | 'Media'
 const filters: Filter[] = ['All Services', 'Education', 'Travel', 'Technology', 'Media']
@@ -17,6 +18,8 @@ export default function ServicesPage() {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const language = useSiteLanguage()
+  const localizedServices = useMemo(() => services.map((service) => localizeService(service, language)), [services, language])
 
   useEffect(() => {
     let active = true
@@ -29,18 +32,18 @@ export default function ServicesPage() {
 
   const categoryCounts = useMemo(() => {
     const counts: Record<ServiceCategory, number> = { education: 0, travel: 0, technology: 0, media: 0 }
-    services.forEach((service) => { counts[service.category] += 1 })
+    localizedServices.forEach((service) => { counts[service.category] += 1 })
     return counts
-  }, [services])
+  }, [localizedServices])
 
   const visibleServices = useMemo(() => {
     const normalized = query.trim().toLowerCase()
-    return services.filter((service) => {
+    return localizedServices.filter((service) => {
       const matchesCategory = activeFilter === 'All Services' || service.category === filterToCategory[activeFilter]
       const matchesSearch = !normalized || `${service.title} ${service.description} ${categoryLabels[service.category]}`.toLowerCase().includes(normalized)
       return matchesCategory && matchesSearch
     })
-  }, [activeFilter, query, services])
+  }, [activeFilter, query, localizedServices])
 
   return (
     <div className="services-page">

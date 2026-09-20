@@ -1,6 +1,7 @@
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { ArrowRight, CalendarDays, Clock3, Filter, Flame, Search, Tag } from 'lucide-react'
-import { newsApi, type NewsCategory, type NewsRecord } from './newsApi'
+import { localizeNews, newsApi, type NewsCategory, type NewsRecord } from './newsApi'
+import { useSiteLanguage } from './useSiteLanguage'
 
 type NewsCategoryFilter = 'all' | NewsCategory
 type DateFilter = 'Any time' | 'This week' | 'This month'
@@ -27,6 +28,8 @@ export default function NewsPage() {
   const [activeCategory, setActiveCategory] = useState<NewsCategoryFilter>('all')
   const [dateFilter, setDateFilter] = useState<DateFilter>('Any time')
   const [query, setQuery] = useState('')
+  const language = useSiteLanguage()
+  const localizedNews = useMemo(() => newsItems.map((item) => localizeNews(item, language)), [newsItems, language])
 
   useEffect(() => {
     let active = true
@@ -39,11 +42,11 @@ export default function NewsPage() {
   }, [])
 
   const featured = useMemo(() => {
-    const selected = newsItems.filter((item) => item.featured)
-    return (selected.length ? selected : newsItems).slice(0, 5)
-  }, [newsItems])
+    const selected = localizedNews.filter((item) => item.featured)
+    return (selected.length ? selected : localizedNews).slice(0, 5)
+  }, [localizedNews])
 
-  const latestDate = newsItems.reduce((latest, item) => item.date > latest ? item.date : latest, '')
+  const latestDate = localizedNews.reduce((latest, item) => item.date > latest ? item.date : latest, '')
   const updatedLabel = latestDate
     ? new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(new Date(`${latestDate}T00:00:00`))
     : 'Latest updates'
@@ -52,7 +55,7 @@ export default function NewsPage() {
     const now = new Date()
     const normalizedQuery = query.trim().toLowerCase()
 
-    return newsItems.filter((item) => {
+    return localizedNews.filter((item) => {
       const itemDate = new Date(`${item.date}T00:00:00`)
       const daysOld = Math.floor((now.getTime() - itemDate.getTime()) / 86400000)
       const matchesCategory = activeCategory === 'all' || item.category === activeCategory
@@ -63,7 +66,7 @@ export default function NewsPage() {
       const matchesSearch = !normalizedQuery || `${item.title} ${item.summary} ${item.category}`.toLowerCase().includes(normalizedQuery)
       return matchesCategory && matchesDate && matchesSearch
     })
-  }, [activeCategory, dateFilter, newsItems, query])
+  }, [activeCategory, dateFilter, localizedNews, query])
 
   return (
     <div className="news-page">

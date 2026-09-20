@@ -18,7 +18,8 @@ import {
   Zap,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { aboutApi, type LeadershipRecord, type StoryItemRecord } from './aboutApi'
+import { aboutApi, localizeLeader, localizeStoryItem, localizeStorySettings, type LeadershipRecord, type StoryItemRecord } from './aboutApi'
+import { useSiteLanguage } from './useSiteLanguage'
 
 const divisions = [
   {
@@ -225,6 +226,7 @@ const metrics = [
 
 export default function AboutPage() {
   const [activeReasonIndex, setActiveReasonIndex] = useState(0)
+  const language = useSiteLanguage()
   const [storyHeading, setStoryHeading] = useState('Built step by step.\nDesigned to grow together.')
   const [storyIntro, setStoryIntro] = useState('Our story is not about one service. It is about building specialized companies that can grow independently and create more value together.')
   const [storyItems, setStoryItems] = useState<StoryItemRecord[]>(defaultStory)
@@ -236,13 +238,14 @@ export default function AboutPage() {
     let active = true
     aboutApi.get().then(({ about }) => {
       if (!active) return
-      if (about.story.heading) setStoryHeading(about.story.heading)
-      if (about.story.intro) setStoryIntro(about.story.intro)
-      setStoryItems(about.story.items)
-      setLeaders(about.leaders)
+      const story = localizeStorySettings(about.story, language)
+      if (story.heading) setStoryHeading(story.heading)
+      if (story.intro) setStoryIntro(story.intro)
+      setStoryItems(about.story.items.map((item) => localizeStoryItem(item, language)))
+      setLeaders(about.leaders.map((item) => localizeLeader(item, language)))
     }).catch(() => {})
     return () => { active = false }
-  }, [])
+  }, [language])
 
   return (
     <div className="about-page">

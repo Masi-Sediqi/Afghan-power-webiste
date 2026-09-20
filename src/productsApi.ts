@@ -1,18 +1,15 @@
+import type { LangCode } from './i18n'
+import { localizedValue, type LocalizedFields } from './localization'
+
 export type ProductCategory = 'education' | 'travel' | 'technology' | 'media'
 export type ProductDetailRow = { label: string; value: string }
-
-export type ProductRecord = {
-  id: string
-  category: ProductCategory
+export type ProductTextFields = {
   title: string
   subtitle: string
   description: string
-  images: string[]
   features: string[]
   badge: string
   priceLabel: string
-  visible: boolean
-  sortOrder: number
   details: ProductDetailRow[]
   sectionTitle: string
   sectionBody: string
@@ -22,9 +19,22 @@ export type ProductRecord = {
   requirements: string[]
   actionLabel: string
   secondaryLabel: string
+}
+
+export type ProductRecord = ProductTextFields & {
+  id: string
+  category: ProductCategory
+  images: string[]
+  visible: boolean
+  sortOrder: number
   secondaryHref: string
+  translations?: LocalizedFields<ProductTextFields>
   createdAt?: string
   updatedAt?: string
+}
+
+export function localizeProduct(product: ProductRecord, lang: LangCode): ProductRecord {
+  return localizedValue(product, product.translations as LocalizedFields<ProductRecord> | undefined, lang)
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {

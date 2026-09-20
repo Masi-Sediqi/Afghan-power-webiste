@@ -1,7 +1,8 @@
 import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { ArrowRight, CheckCircle2, Clock3, GraduationCap, Headphones, Mail, MapPin, MessageCircle, Phone, PlaneTakeoff, Send, Sparkles, Video, Zap } from 'lucide-react'
-import { contactApi, type ContactSettings } from './contactApi'
-import { servicesApi, type ServiceRecord } from './servicesApi'
+import { contactApi, localizeContact, type ContactSettings } from './contactApi'
+import { localizeService, servicesApi, type ServiceRecord } from './servicesApi'
+import { useSiteLanguage } from './useSiteLanguage'
 
 const fallback: ContactSettings = {
   heroKicker:'CONTACT AFGHAN POWER GROUP', heroTitle:'Start with the', heroHighlight:'right team.', heroText:'Education, travel, technology or media — tell us what you need and we’ll help you reach the right division without the back-and-forth.',
@@ -13,6 +14,7 @@ const telHref=(value:string)=>`tel:${value.replace(/[^+\d]/g,'')}`
 const waHref=(value:string)=>`https://wa.me/${value.replace(/\D/g,'')}`
 
 export default function ContactPage() {
+  const language = useSiteLanguage()
   const [contact,setContact]=useState<ContactSettings>(fallback)
   const [services,setServices]=useState<ServiceRecord[]>([])
   const [sending,setSending]=useState(false)
@@ -20,7 +22,7 @@ export default function ContactPage() {
   const [error,setError]=useState('')
   const [form,setForm]=useState({name:'',phone:'',email:'',division:'',service:'',subject:'',message:''})
 
-  useEffect(()=>{ let active=true; Promise.all([contactApi.get(),servicesApi.list()]).then(([c,s])=>{if(!active)return;setContact(c.contact);setServices(s.services)}).catch(()=>{}); return()=>{active=false}},[])
+  useEffect(()=>{ let active=true; Promise.all([contactApi.get(),servicesApi.list()]).then(([c,s])=>{if(!active)return;setContact(localizeContact(c.contact,language));setServices(s.services.map(item=>localizeService(item,language)))}).catch(()=>{}); return()=>{active=false}},[language])
   const filteredServices=useMemo(()=>form.division?services.filter(s=>s.category===form.division):services,[services,form.division])
   const divisions=contact.divisions.length?contact.divisions:[
     {id:'education',label:'EDUCATION',title:'Educational Consultancy',text:'Study visas, university admissions, scholarships and international education guidance.',visible:true,sortOrder:1},

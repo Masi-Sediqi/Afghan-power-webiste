@@ -245,7 +245,7 @@ const emptyProduct = (): ProductRecord => ({
   id: '', category: 'technology', title: '', subtitle: '', description: '', images: [], features: [], badge: '',
   priceLabel: 'Contact for Price', visible: true, sortOrder: 0, details: [], sectionTitle: 'About this product', sectionBody: '',
   recommendedTitle: 'Recommended for', recommendedFor: [], requirementsTitle: 'Information', requirements: [],
-  actionLabel: 'Request a Consultation', secondaryLabel: '', secondaryHref: '',
+  actionLabel: 'Request a Consultation', secondaryLabel: '', secondaryHref: '', translations: { fa: {}, ps: {} },
 })
 
 const lines = (value: string) => value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean)
@@ -253,6 +253,10 @@ const detailLines = (value: string) => lines(value).map((item) => {
   const [label, ...rest] = item.split('|')
   return { label: label.trim(), value: rest.join('|').trim() }
 }).filter((item) => item.label && item.value)
+
+type TranslationLanguage = 'fa' | 'ps'
+const translationValue = (item: { translations?: any }, lang: TranslationLanguage, key: string) => item.translations?.[lang]?.[key] ?? ''
+const withTranslation = <T extends { translations?: any }>(item: T, lang: TranslationLanguage, patch: Record<string, unknown>): T => ({ ...item, translations: { ...(item.translations || {}), [lang]: { ...(item.translations?.[lang] || {}), ...patch } } })
 
 function ProductManager() {
   const [products, setProducts] = useState<ProductRecord[]>([])
@@ -401,6 +405,24 @@ function ProductManager() {
             <section className="admin-form-section"><h3>Recommended & information</h3><div className="admin-form-grid"><label className="span-2"><span>Recommended title</span><input value={form.recommendedTitle} onChange={(e) => setForm({ ...form, recommendedTitle: e.target.value })}/></label><label className="span-2"><span>Recommended items · one per line</span><textarea value={recommendedText} onChange={(e) => setRecommendedText(e.target.value)} rows={4}/></label><label className="span-2"><span>Requirements / Information title</span><input value={form.requirementsTitle} onChange={(e) => setForm({ ...form, requirementsTitle: e.target.value })}/></label><label className="span-2"><span>Requirements / Information · one per line</span><textarea value={requirementsText} onChange={(e) => setRequirementsText(e.target.value)} rows={4}/></label></div></section>
 
             <section className="admin-form-section"><h3>Actions</h3><div className="admin-form-grid"><label><span>Primary action label *</span><input value={form.actionLabel} onChange={(e) => setForm({ ...form, actionLabel: e.target.value })} required/></label><label><span>Secondary action label</span><input value={form.secondaryLabel} onChange={(e) => setForm({ ...form, secondaryLabel: e.target.value })}/></label><label className="span-2"><span>Secondary action link</span><input value={form.secondaryHref} onChange={(e) => setForm({ ...form, secondaryHref: e.target.value })} placeholder="#contact or https://…"/></label></div></section>
+
+            <section className="admin-form-section"><h3>Translations · دری / پشتو</h3><p>Leave any field empty to fall back to English.</p>{(['fa','ps'] as TranslationLanguage[]).map((lang) => <div className="admin-translation-panel" key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid">
+              <label className="span-2"><span>Title</span><input dir="rtl" value={translationValue(form,lang,'title')} onChange={(e)=>setForm(withTranslation(form,lang,{title:e.target.value}))}/></label>
+              <label className="span-2"><span>Subtitle</span><input dir="rtl" value={translationValue(form,lang,'subtitle')} onChange={(e)=>setForm(withTranslation(form,lang,{subtitle:e.target.value}))}/></label>
+              <label className="span-2"><span>Description</span><textarea dir="rtl" rows={3} value={translationValue(form,lang,'description')} onChange={(e)=>setForm(withTranslation(form,lang,{description:e.target.value}))}/></label>
+              <label><span>Badge</span><input dir="rtl" value={translationValue(form,lang,'badge')} onChange={(e)=>setForm(withTranslation(form,lang,{badge:e.target.value}))}/></label>
+              <label><span>Pricing label</span><input dir="rtl" value={translationValue(form,lang,'priceLabel')} onChange={(e)=>setForm(withTranslation(form,lang,{priceLabel:e.target.value}))}/></label>
+              <label className="span-2"><span>Features · one per line</span><textarea dir="rtl" rows={4} value={(translationValue(form,lang,'features')||[]).join?.('\n')||''} onChange={(e)=>setForm(withTranslation(form,lang,{features:lines(e.target.value)}))}/></label>
+              <label className="span-2"><span>Details · Label | Value</span><textarea dir="rtl" rows={5} value={(translationValue(form,lang,'details')||[]).map?.((x:any)=>`${x.label} | ${x.value}`).join('\n')||''} onChange={(e)=>setForm(withTranslation(form,lang,{details:detailLines(e.target.value)}))}/></label>
+              <label className="span-2"><span>Details section title</span><input dir="rtl" value={translationValue(form,lang,'sectionTitle')} onChange={(e)=>setForm(withTranslation(form,lang,{sectionTitle:e.target.value}))}/></label>
+              <label className="span-2"><span>Details section body</span><textarea dir="rtl" rows={3} value={translationValue(form,lang,'sectionBody')} onChange={(e)=>setForm(withTranslation(form,lang,{sectionBody:e.target.value}))}/></label>
+              <label className="span-2"><span>Recommended title</span><input dir="rtl" value={translationValue(form,lang,'recommendedTitle')} onChange={(e)=>setForm(withTranslation(form,lang,{recommendedTitle:e.target.value}))}/></label>
+              <label className="span-2"><span>Recommended items · one per line</span><textarea dir="rtl" rows={3} value={(translationValue(form,lang,'recommendedFor')||[]).join?.('\n')||''} onChange={(e)=>setForm(withTranslation(form,lang,{recommendedFor:lines(e.target.value)}))}/></label>
+              <label className="span-2"><span>Information title</span><input dir="rtl" value={translationValue(form,lang,'requirementsTitle')} onChange={(e)=>setForm(withTranslation(form,lang,{requirementsTitle:e.target.value}))}/></label>
+              <label className="span-2"><span>Information items · one per line</span><textarea dir="rtl" rows={3} value={(translationValue(form,lang,'requirements')||[]).join?.('\n')||''} onChange={(e)=>setForm(withTranslation(form,lang,{requirements:lines(e.target.value)}))}/></label>
+              <label><span>Primary action label</span><input dir="rtl" value={translationValue(form,lang,'actionLabel')} onChange={(e)=>setForm(withTranslation(form,lang,{actionLabel:e.target.value}))}/></label>
+              <label><span>Secondary action label</span><input dir="rtl" value={translationValue(form,lang,'secondaryLabel')} onChange={(e)=>setForm(withTranslation(form,lang,{secondaryLabel:e.target.value}))}/></label>
+            </div></div>)}</section>
           </div>
           <footer><button type="button" onClick={closeForm}>Cancel</button><button className="save" disabled={saving || uploading}><Save size={16}/>{saving ? 'Saving…' : editingId ? 'Save Changes' : 'Create Product'}</button></footer>
         </form>
@@ -419,7 +441,7 @@ const serviceCategoryOptions: Array<{ value: ServiceCategory; label: string }> =
 
 const emptyService = (): ServiceRecord => ({
   id: '', category: 'technology', title: '', description: '', image: '', featured: false,
-  visible: true, sortOrder: 0, actionLabel: 'Learn more', actionHref: '#/contact',
+  visible: true, sortOrder: 0, actionLabel: 'Learn more', actionHref: '#/contact', translations: { fa: {}, ps: {} },
 })
 
 function ServiceManager() {
@@ -534,6 +556,7 @@ function ServiceManager() {
             </div></section>
             <section className="admin-form-section"><h3><ImagePlus size={17}/> Service image</h3><div className="admin-form-grid"><label className="span-2"><span>Image URL / path *</span><input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://… or /uploads/services/…" required/></label></div><label className="admin-upload-button"><Upload size={16}/>{uploading ? 'Uploading…' : 'Upload image'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploading} onChange={(e) => { void uploadImage(e.target.files?.[0]); e.currentTarget.value = '' }}/></label>{form.image && <div className="admin-image-preview-strip"><img src={form.image} alt=""/></div>}</section>
             <section className="admin-form-section"><h3>Action</h3><div className="admin-form-grid"><label><span>Button label</span><input value={form.actionLabel} onChange={(e) => setForm({ ...form, actionLabel: e.target.value })}/></label><label><span>Button link</span><input value={form.actionHref} onChange={(e) => setForm({ ...form, actionHref: e.target.value })} placeholder="#/contact"/></label></div></section>
+            <section className="admin-form-section"><h3>Translations · دری / پشتو</h3><p>Empty fields use the English version.</p>{(['fa','ps'] as TranslationLanguage[]).map((lang)=><div className="admin-translation-panel" key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid"><label className="span-2"><span>Title</span><input dir="rtl" value={translationValue(form,lang,'title')} onChange={(e)=>setForm(withTranslation(form,lang,{title:e.target.value}))}/></label><label className="span-2"><span>Description</span><textarea dir="rtl" rows={4} value={translationValue(form,lang,'description')} onChange={(e)=>setForm(withTranslation(form,lang,{description:e.target.value}))}/></label><label className="span-2"><span>Button label</span><input dir="rtl" value={translationValue(form,lang,'actionLabel')} onChange={(e)=>setForm(withTranslation(form,lang,{actionLabel:e.target.value}))}/></label></div></div>)}</section>
           </div>
           <footer><button type="button" onClick={closeForm}>Cancel</button><button className="save" disabled={saving || uploading}><Save size={16}/>{saving ? 'Saving…' : editingId ? 'Save Changes' : 'Create Service'}</button></footer>
         </form>
@@ -553,7 +576,7 @@ const newsCategoryOptions: Array<{ value: NewsCategory; label: string }> = [
 
 const emptyNews = (): NewsRecord => ({
   id: '', title: '', category: 'company', date: new Date().toISOString().slice(0, 10), readTime: '3 min read',
-  featured: false, visible: true, sortOrder: 0, image: '', summary: '',
+  featured: false, visible: true, sortOrder: 0, image: '', summary: '', translations: { fa: {}, ps: {} },
 })
 
 function NewsManager() {
@@ -666,6 +689,7 @@ function NewsManager() {
               <label className="admin-checkbox-field"><input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })}/><span>Featured news</span></label>
             </div></section>
             <section className="admin-form-section"><h3><ImagePlus size={17}/> News image</h3><div className="admin-form-grid"><label className="span-2"><span>Image URL / path *</span><input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://… or /uploads/news/…" required/></label></div><label className="admin-upload-button"><Upload size={16}/>{uploading ? 'Uploading…' : 'Upload image'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploading} onChange={(e) => { void uploadImage(e.target.files?.[0]); e.currentTarget.value = '' }}/></label>{form.image && <div className="admin-image-preview-strip"><img src={form.image} alt=""/></div>}</section>
+            <section className="admin-form-section"><h3>Translations · دری / پشتو</h3><p>Empty fields use the English version.</p>{(['fa','ps'] as TranslationLanguage[]).map((lang)=><div className="admin-translation-panel" key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid"><label className="span-2"><span>Title</span><input dir="rtl" value={translationValue(form,lang,'title')} onChange={(e)=>setForm(withTranslation(form,lang,{title:e.target.value}))}/></label><label className="span-2"><span>Summary</span><textarea dir="rtl" rows={4} value={translationValue(form,lang,'summary')} onChange={(e)=>setForm(withTranslation(form,lang,{summary:e.target.value}))}/></label><label><span>Read time</span><input dir="rtl" value={translationValue(form,lang,'readTime')} onChange={(e)=>setForm(withTranslation(form,lang,{readTime:e.target.value}))}/></label></div></div>)}</section>
           </div>
           <footer><button type="button" onClick={closeForm}>Cancel</button><button className="save" disabled={saving || uploading}><Save size={16}/>{saving ? 'Saving…' : editingId ? 'Save Changes' : 'Create News'}</button></footer>
         </form>
@@ -675,8 +699,8 @@ function NewsManager() {
 }
 
 
-const emptyStoryItem = (): StoryItemRecord => ({ id: '', step: '', title: '', text: '', visible: true, sortOrder: 0, createdAt: '', updatedAt: '' })
-const emptyLeader = (): LeadershipRecord => ({ id: '', name: '', role: '', text: '', photo: '', visible: true, sortOrder: 0, createdAt: '', updatedAt: '' })
+const emptyStoryItem = (): StoryItemRecord => ({ id: '', step: '', title: '', text: '', visible: true, sortOrder: 0, translations: { fa: {}, ps: {} }, createdAt: '', updatedAt: '' })
+const emptyLeader = (): LeadershipRecord => ({ id: '', name: '', role: '', text: '', photo: '', visible: true, sortOrder: 0, translations: { fa: {}, ps: {} }, createdAt: '', updatedAt: '' })
 
 function AboutManager() {
   const [about, setAbout] = useState<AboutData | null>(null)
@@ -688,6 +712,7 @@ function AboutManager() {
   const [message, setMessage] = useState('')
   const [storyHeading, setStoryHeading] = useState('')
   const [storyIntro, setStoryIntro] = useState('')
+  const [storyTranslations, setStoryTranslations] = useState<any>({ fa: {}, ps: {} })
   const [storyFormOpen, setStoryFormOpen] = useState(false)
   const [leaderFormOpen, setLeaderFormOpen] = useState(false)
   const [editingStoryId, setEditingStoryId] = useState<string | null>(null)
@@ -702,6 +727,7 @@ function AboutManager() {
       setAbout(result.about)
       setStoryHeading(result.about.story.heading)
       setStoryIntro(result.about.story.intro)
+      setStoryTranslations(result.about.story.translations || { fa: {}, ps: {} })
     } catch (err) { setError(err instanceof Error ? err.message : 'Unable to load About content.') }
     finally { setLoading(false) }
   }
@@ -710,7 +736,7 @@ function AboutManager() {
   const saveStorySettings = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); setSaving(true); setError(''); setMessage('')
     try {
-      await adminApi.updateStorySettings({ heading: storyHeading, intro: storyIntro })
+      await adminApi.updateStorySettings({ heading: storyHeading, intro: storyIntro, translations: storyTranslations })
       setMessage('Story heading and introduction updated.')
       await load()
     } catch (err) { setError(err instanceof Error ? err.message : 'Unable to update story settings.') }
@@ -780,6 +806,8 @@ function AboutManager() {
         <label><span>Heading *</span><textarea rows={3} value={storyHeading} onChange={(e) => setStoryHeading(e.target.value)} required/></label>
         <label><span>Introduction *</span><textarea rows={3} value={storyIntro} onChange={(e) => setStoryIntro(e.target.value)} required/></label>
       </div>
+      <div className="admin-translation-panel"><h4>دری</h4><div className="admin-form-grid"><label><span>Heading</span><textarea dir="rtl" rows={3} value={storyTranslations.fa?.heading || ''} onChange={(e)=>setStoryTranslations((v:any)=>({...v,fa:{...(v.fa||{}),heading:e.target.value}}))}/></label><label><span>Introduction</span><textarea dir="rtl" rows={3} value={storyTranslations.fa?.intro || ''} onChange={(e)=>setStoryTranslations((v:any)=>({...v,fa:{...(v.fa||{}),intro:e.target.value}}))}/></label></div></div>
+      <div className="admin-translation-panel"><h4>پښتو</h4><div className="admin-form-grid"><label><span>Heading</span><textarea dir="rtl" rows={3} value={storyTranslations.ps?.heading || ''} onChange={(e)=>setStoryTranslations((v:any)=>({...v,ps:{...(v.ps||{}),heading:e.target.value}}))}/></label><label><span>Introduction</span><textarea dir="rtl" rows={3} value={storyTranslations.ps?.intro || ''} onChange={(e)=>setStoryTranslations((v:any)=>({...v,ps:{...(v.ps||{}),intro:e.target.value}}))}/></label></div></div>
     </form>
 
     <div className="admin-about-grid">
@@ -811,7 +839,7 @@ function AboutManager() {
       <label className="span-2"><span>Description *</span><textarea rows={4} value={storyForm.text} onChange={(e) => setStoryForm({...storyForm,text:e.target.value})} required/></label>
       <label><span>Sort order</span><input type="number" value={storyForm.sortOrder} onChange={(e) => setStoryForm({...storyForm,sortOrder:Number(e.target.value)})}/></label>
       <label className="admin-checkbox-field"><input type="checkbox" checked={storyForm.visible} onChange={(e) => setStoryForm({...storyForm,visible:e.target.checked})}/><span>Visible on About page</span></label>
-    </div></section></div><footer><button type="button" onClick={() => setStoryFormOpen(false)}>Cancel</button><button className="save" disabled={saving}><Save size={16}/>{saving?'Saving…':'Save Story Step'}</button></footer></form></div>}
+    </div></section><section className="admin-form-section"><h3>Translations · دری / پشتو</h3>{(['fa','ps'] as TranslationLanguage[]).map((lang)=><div className="admin-translation-panel" key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid"><label><span>Step</span><input dir="rtl" value={translationValue(storyForm,lang,'step')} onChange={(e)=>setStoryForm(withTranslation(storyForm,lang,{step:e.target.value}))}/></label><label><span>Title</span><input dir="rtl" value={translationValue(storyForm,lang,'title')} onChange={(e)=>setStoryForm(withTranslation(storyForm,lang,{title:e.target.value}))}/></label><label className="span-2"><span>Description</span><textarea dir="rtl" rows={4} value={translationValue(storyForm,lang,'text')} onChange={(e)=>setStoryForm(withTranslation(storyForm,lang,{text:e.target.value}))}/></label></div></div>)}</section></div><footer><button type="button" onClick={() => setStoryFormOpen(false)}>Cancel</button><button className="save" disabled={saving}><Save size={16}/>{saving?'Saving…':'Save Story Step'}</button></footer></form></div>}
 
     {leaderFormOpen && <div className="admin-product-modal" role="dialog" aria-modal="true"><button className="admin-product-modal-backdrop" onClick={() => setLeaderFormOpen(false)} aria-label="Close team form"/><form className="admin-product-form" onSubmit={saveLeader}><header><div><span>ABOUT · LEADERSHIP</span><h2>{editingLeaderId ? 'Edit Team Member' : 'Add Team Member'}</h2></div><button type="button" onClick={() => setLeaderFormOpen(false)}><X size={20}/></button></header><div className="admin-product-form-scroll"><section className="admin-form-section"><div className="admin-form-grid">
       <label><span>ID *</span><input value={leaderForm.id} disabled={Boolean(editingLeaderId)} onChange={(e) => setLeaderForm({...leaderForm,id:e.target.value})} placeholder="team-member" required/></label>
@@ -821,13 +849,13 @@ function AboutManager() {
       <label className="span-2"><span>Description *</span><textarea rows={4} value={leaderForm.text} onChange={(e) => setLeaderForm({...leaderForm,text:e.target.value})} required/></label>
       <label className="span-2"><span>Photo URL / path *</span><input value={leaderForm.photo} onChange={(e) => setLeaderForm({...leaderForm,photo:e.target.value})} required/></label>
       <label className="admin-checkbox-field"><input type="checkbox" checked={leaderForm.visible} onChange={(e) => setLeaderForm({...leaderForm,visible:e.target.checked})}/><span>Visible on About page</span></label>
-    </div><label className="admin-upload-button"><Upload size={16}/>{uploading?'Uploading…':'Upload photo'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploading} onChange={(e)=>{void uploadLeader(e.target.files?.[0]);e.currentTarget.value=''}}/></label>{leaderForm.photo && <div className="admin-image-preview-strip"><img src={leaderForm.photo} alt=""/></div>}</section></div><footer><button type="button" onClick={() => setLeaderFormOpen(false)}>Cancel</button><button className="save" disabled={saving||uploading}><Save size={16}/>{saving?'Saving…':'Save Team Member'}</button></footer></form></div>}
+    </div><div className="admin-translation-panel"><h4>Translations · دری / پشتو</h4>{(['fa','ps'] as TranslationLanguage[]).map((lang)=><div key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid"><label><span>Name</span><input dir="rtl" value={translationValue(leaderForm,lang,'name')} onChange={(e)=>setLeaderForm(withTranslation(leaderForm,lang,{name:e.target.value}))}/></label><label><span>Role</span><input dir="rtl" value={translationValue(leaderForm,lang,'role')} onChange={(e)=>setLeaderForm(withTranslation(leaderForm,lang,{role:e.target.value}))}/></label><label className="span-2"><span>Description</span><textarea dir="rtl" rows={4} value={translationValue(leaderForm,lang,'text')} onChange={(e)=>setLeaderForm(withTranslation(leaderForm,lang,{text:e.target.value}))}/></label></div></div>)}</div><label className="admin-upload-button"><Upload size={16}/>{uploading?'Uploading…':'Upload photo'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploading} onChange={(e)=>{void uploadLeader(e.target.files?.[0]);e.currentTarget.value=''}}/></label>{leaderForm.photo && <div className="admin-image-preview-strip"><img src={leaderForm.photo} alt=""/></div>}</section></div><footer><button type="button" onClick={() => setLeaderFormOpen(false)}>Cancel</button><button className="save" disabled={saving||uploading}><Save size={16}/>{saving?'Saving…':'Save Team Member'}</button></footer></form></div>}
   </div>
 }
 
 
 const emptyContactSettings = (): ContactSettings => ({
-  heroKicker:'CONTACT AFGHAN POWER GROUP', heroTitle:'Start with the', heroHighlight:'right team.', heroText:'', phone:'', email:'', whatsapp:'', office:'', workingHours:'', infoTitle:'', infoText:'', mapTitle:'', mapText:'', mapEmbedUrl:'', divisions:[],
+  heroKicker:'CONTACT AFGHAN POWER GROUP', heroTitle:'Start with the', heroHighlight:'right team.', heroText:'', phone:'', email:'', whatsapp:'', office:'', workingHours:'', infoTitle:'', infoText:'', mapTitle:'', mapText:'', mapEmbedUrl:'', translations:{fa:{},ps:{}}, divisions:[],
 })
 
 function ContactManager() {
@@ -859,11 +887,23 @@ function ContactManager() {
           <label><span>Map text</span><input value={form.mapText} onChange={e=>setForm({...form,mapText:e.target.value})}/></label>
           <label className="span-2"><span>Google Maps embed URL</span><input value={form.mapEmbedUrl} onChange={e=>setForm({...form,mapEmbedUrl:e.target.value})}/></label>
         </div>
+        <div className="admin-translation-panel"><h4>Translations · دری / پشتو</h4>{(['fa','ps'] as TranslationLanguage[]).map((lang)=><div key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid">
+          <label><span>Hero kicker</span><input dir="rtl" value={translationValue(form,lang,'heroKicker')} onChange={(e)=>setForm(withTranslation(form,lang,{heroKicker:e.target.value}))}/></label>
+          <label><span>Hero title</span><input dir="rtl" value={translationValue(form,lang,'heroTitle')} onChange={(e)=>setForm(withTranslation(form,lang,{heroTitle:e.target.value}))}/></label>
+          <label><span>Highlighted title</span><input dir="rtl" value={translationValue(form,lang,'heroHighlight')} onChange={(e)=>setForm(withTranslation(form,lang,{heroHighlight:e.target.value}))}/></label>
+          <label className="span-2"><span>Hero description</span><textarea dir="rtl" rows={3} value={translationValue(form,lang,'heroText')} onChange={(e)=>setForm(withTranslation(form,lang,{heroText:e.target.value}))}/></label>
+          <label><span>Office</span><input dir="rtl" value={translationValue(form,lang,'office')} onChange={(e)=>setForm(withTranslation(form,lang,{office:e.target.value}))}/></label>
+          <label><span>Working hours</span><input dir="rtl" value={translationValue(form,lang,'workingHours')} onChange={(e)=>setForm(withTranslation(form,lang,{workingHours:e.target.value}))}/></label>
+          <label><span>Info panel title</span><input dir="rtl" value={translationValue(form,lang,'infoTitle')} onChange={(e)=>setForm(withTranslation(form,lang,{infoTitle:e.target.value}))}/></label>
+          <label className="span-2"><span>Info panel text</span><textarea dir="rtl" rows={2} value={translationValue(form,lang,'infoText')} onChange={(e)=>setForm(withTranslation(form,lang,{infoText:e.target.value}))}/></label>
+          <label><span>Map title</span><input dir="rtl" value={translationValue(form,lang,'mapTitle')} onChange={(e)=>setForm(withTranslation(form,lang,{mapTitle:e.target.value}))}/></label>
+          <label><span>Map text</span><input dir="rtl" value={translationValue(form,lang,'mapText')} onChange={(e)=>setForm(withTranslation(form,lang,{mapText:e.target.value}))}/></label>
+        </div></div>)}</div>
       </section>
       <section className="admin-products-list"><div className="admin-products-list-head"><div><strong>Contact Divisions</strong><span>{form.divisions.filter(d=>d.visible).length} visible</span></div></div>
         {form.divisions.map((d,index)=><article className="admin-form-section" key={d.id}><div className="admin-card-head"><div><span>{d.id.toUpperCase()}</span><h2>{d.title}</h2></div><label className="admin-checkbox-field"><input type="checkbox" checked={d.visible} onChange={e=>updateDivision(index,{visible:e.target.checked})}/><span>Visible</span></label></div><div className="admin-form-grid">
           <label><span>Label</span><input value={d.label} onChange={e=>updateDivision(index,{label:e.target.value})}/></label><label><span>Title</span><input value={d.title} onChange={e=>updateDivision(index,{title:e.target.value})}/></label><label className="span-2"><span>Description</span><textarea rows={3} value={d.text} onChange={e=>updateDivision(index,{text:e.target.value})}/></label><label><span>Sort order</span><input type="number" value={d.sortOrder} onChange={e=>updateDivision(index,{sortOrder:Number(e.target.value)})}/></label>
-        </div></article>)}
+        </div><div className="admin-translation-panel"><h4>دری / پښتو</h4>{(['fa','ps'] as TranslationLanguage[]).map((lang)=><div key={lang}><h4>{lang==='fa'?'دری':'پښتو'}</h4><div className="admin-form-grid"><label><span>Label</span><input dir="rtl" value={translationValue(d,lang,'label')} onChange={(e)=>updateDivision(index,{translations:{...(d.translations||{}),[lang]:{...(d.translations?.[lang]||{}),label:e.target.value}}})}/></label><label><span>Title</span><input dir="rtl" value={translationValue(d,lang,'title')} onChange={(e)=>updateDivision(index,{translations:{...(d.translations||{}),[lang]:{...(d.translations?.[lang]||{}),title:e.target.value}}})}/></label><label className="span-2"><span>Description</span><textarea dir="rtl" rows={3} value={translationValue(d,lang,'text')} onChange={(e)=>updateDivision(index,{translations:{...(d.translations||{}),[lang]:{...(d.translations?.[lang]||{}),text:e.target.value}}})}/></label></div></div>)}</div></article>)}
       </section>
     </form>
   </div>
