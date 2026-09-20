@@ -7,7 +7,7 @@ export type ConfiguredAdmin = {
   createdAt: string
 }
 
-type AdminEnv = {
+type AdminEnv = NodeJS.ProcessEnv & {
   ADMIN_EMAIL?: string
   ADMIN_PASSWORD?: string
 }
