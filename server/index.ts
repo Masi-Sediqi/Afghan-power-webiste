@@ -1,6 +1,6 @@
 import http, { type IncomingMessage, type ServerResponse } from 'node:http'
 import { URL } from 'node:url'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { createLocalUser, findUserByEmail, findUserById, findUserByIdentifier, initDb, safeUser, upsertGoogleUser } from './db.js'
 import { hashPassword, normalizeEmail, normalizePhone, parseCookies, signSession, validatePassword, verifyPassword, verifySession } from './auth.js'
@@ -11,6 +11,7 @@ import { createNews, deleteNews, getNews, listNews, updateNews, type NewsInput }
 import { createLeader, createStoryItem, deleteLeader, deleteStoryItem, getAbout, updateLeader, updateStoryItem, updateStorySettings, type LeadershipInput, type StoryItemInput, type StorySettingsInput } from './about.js'
 import { getContact, getAdminContact, updateContact, type ContactSettings } from './contact.js'
 import { createMessage, deleteMessage, listMessages, setMessageStatus, type ContactMessageInput } from './messages.js'
+import { normalizeUploadUrls, resolveUploadFile } from './uploads.js'
 
 const port = Number(process.env.PORT || 3001)
 const sessionSecret = process.env.SESSION_SECRET || ''
@@ -21,7 +22,7 @@ if (sessionSecret.length < 24) throw new Error('SESSION_SECRET must be at least 
 
 function send(res: ServerResponse, status: number, body: unknown, headers: Record<string, string> = {}) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', ...headers })
-  res.end(JSON.stringify(body))
+  res.end(JSON.stringify(normalizeUploadUrls(body)))
 }
 
 async function readJson(req: IncomingMessage) {
@@ -141,6 +142,27 @@ async function handleGoogleCredential(credential: string) {
 
 async function route(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || '/', 'http://localhost')
+
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    const upload = resolveUploadFile(url.pathname)
+    if (upload) {
+      try {
+        const file = await readFile(upload.filePath)
+        res.writeHead(200, {
+          'Content-Type': upload.contentType,
+          'Content-Length': String(file.length),
+          'Cache-Control': 'public, max-age=2592000, immutable',
+          'X-Content-Type-Options': 'nosniff',
+        })
+        if (req.method === 'HEAD') return res.end()
+        return res.end(file)
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT') return send(res, 404, { error: 'Image not found.' })
+        throw error
+      }
+    }
+  }
+
   if (req.method === 'GET' && url.pathname === '/api/health') return send(res, 200, { ok: true })
 
 
