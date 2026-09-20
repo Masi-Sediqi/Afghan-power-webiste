@@ -21,6 +21,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { aboutApi, localizeLeader, localizeStoryItem, localizeStorySettings, type LeadershipRecord, type StoryItemRecord } from './aboutApi'
 import { useSiteLanguage } from './useSiteLanguage'
 
+const divisionRank: Record<string, number> = { Technology: 0, Education: 1, Travel: 2, Media: 3 }
+
 const divisions = [
   {
     icon: GraduationCap,
@@ -58,7 +60,7 @@ const divisions = [
     image: 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1200&q=84',
     href: '#/products/media',
   },
-]
+].sort((a, b) => divisionRank[a.label] - divisionRank[b.label])
 
 const defaultStory: StoryItemRecord[] = [
   {
@@ -297,7 +299,7 @@ export default function AboutPage() {
             Every company in the group has its own role, services and team, while sharing the same commitment to professional communication, reliable execution and useful long-term support.
           </p>
           <div className="about-who-tags">
-            {['Education', 'Travel', 'Technology', 'Media Production'].map((tag) => <span key={tag}>{tag}</span>)}
+            {['Technology', 'Education', 'Travel', 'Media Production'].map((tag) => <span key={tag}>{tag}</span>)}
           </div>
         </div>
       </section>

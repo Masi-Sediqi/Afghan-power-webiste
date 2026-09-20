@@ -11,6 +11,8 @@ type ProductGroup = {
   brandTheme?: 'light' | 'dark'
 }
 
+const productGroupRank: Record<string, number> = { Technology: 0, Education: 1, Travel: 2, Media: 3 }
+
 const productGroups: ProductGroup[] = [
   {
     title: 'Educational Products',
@@ -49,7 +51,7 @@ const productGroups: ProductGroup[] = [
     brandAlt: 'Afghan Power Media Production',
     brandTheme: 'dark',
   },
-]
+].sort((a, b) => productGroupRank[a.meta] - productGroupRank[b.meta])
 
 type ProductMegaMenuProps = {
   active?: boolean

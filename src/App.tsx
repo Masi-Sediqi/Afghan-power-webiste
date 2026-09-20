@@ -51,6 +51,8 @@ import AdminApp from './AdminApp'
 import { localizeService, servicesApi, type ServiceRecord } from './servicesApi'
 import { useSiteLanguage } from './useSiteLanguage'
 
+const homeCategoryPriority: Record<string, number> = { TECHNOLOGY: 0, TECH: 0, EDUCATION: 1, EDUCATIONAL: 1, TRAVEL: 2, MEDIA: 3, technology: 0, education: 1, travel: 2, media: 3 }
+
 const services = [
   {
     icon: GraduationCap,
@@ -108,7 +110,7 @@ const services = [
     text: 'Video production, graphic design, advertising, digital marketing and content that helps brands stand out.',
     image: 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=900&q=82',
   },
-]
+].sort((a, b) => homeCategoryPriority[a.category] - homeCategoryPriority[b.category])
 
 const scrollingServices = [...services, ...services]
 
@@ -188,7 +190,7 @@ const groupSlides = [
     image: 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1800&q=86',
     label: 'Creative Media',
   },
-]
+].sort((a, b) => homeCategoryPriority[a.eyebrow.split(' ')[0]] - homeCategoryPriority[b.eyebrow.split(' ')[0]])
 
 function Brand() {
   return (
@@ -261,7 +263,7 @@ function PublicSite() {
 
   useEffect(() => {
     let active = true
-    servicesApi.list().then((result) => { if (active) setHomeServices(result.services.map((item) => localizeService(item, language))) }).catch(() => { if (active) setHomeServices([]) })
+    servicesApi.list().then((result) => { if (active) setHomeServices(result.services.map((item) => localizeService(item, language)).sort((a, b) => homeCategoryPriority[a.category] - homeCategoryPriority[b.category] || a.sortOrder - b.sortOrder)) }).catch(() => { if (active) setHomeServices([]) })
     return () => { active = false }
   }, [language])
 

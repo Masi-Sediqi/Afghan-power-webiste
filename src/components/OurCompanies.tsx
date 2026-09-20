@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 
+const companyRank: Record<string, number> = { 'Tech Development': 0, 'Educational Consultancy': 1, 'Travel Agency': 2, 'Media Production': 3 }
+
 const companies = [
   {
     name: 'Educational Consultancy',
@@ -38,7 +40,7 @@ const companies = [
     href: '#contact',
     image: 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1200&q=84',
   },
-]
+].sort((a, b) => companyRank[a.name] - companyRank[b.name])
 
 export default function OurCompanies() {
   return (

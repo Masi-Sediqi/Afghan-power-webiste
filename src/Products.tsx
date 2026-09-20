@@ -16,11 +16,13 @@ import { useSiteLanguage } from './useSiteLanguage'
 
 type ProductFilter = 'all' | ProductCategory
 
+const categoryPriority: Record<ProductCategory, number> = { technology: 0, education: 1, travel: 2, media: 3 }
+
 const filters: { id: ProductFilter; label: string }[] = [
   { id: 'all', label: 'All' },
+  { id: 'technology', label: 'Technology' },
   { id: 'education', label: 'Education' },
   { id: 'travel', label: 'Travel' },
-  { id: 'technology', label: 'Technology' },
   { id: 'media', label: 'Media' },
 ]
 
@@ -76,7 +78,7 @@ export default function ProductsPage({ route = '#/products' }: ProductsPageProps
         ...product.features,
       ].join(' ').toLowerCase()
       return matchesCategory && (!normalizedQuery || searchableText.includes(normalizedQuery))
-    })
+    }).sort((a, b) => categoryPriority[a.category] - categoryPriority[b.category] || a.sortOrder - b.sortOrder)
   }, [activeFilter, localizedProducts, searchTerm])
 
   return (

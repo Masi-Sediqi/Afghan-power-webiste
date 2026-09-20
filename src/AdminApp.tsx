@@ -234,10 +234,12 @@ function Dashboard() {
 }
 
 
+const adminCategoryPriority: Record<string, number> = { technology: 0, education: 1, travel: 2, media: 3 }
+
 const productCategoryOptions: Array<{ value: ProductCategory; label: string }> = [
+  { value: 'technology', label: 'Technology' },
   { value: 'education', label: 'Education' },
   { value: 'travel', label: 'Travel' },
-  { value: 'technology', label: 'Technology' },
   { value: 'media', label: 'Media' },
 ]
 
@@ -347,7 +349,7 @@ function ProductManager() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return products.filter((product) => (category === 'all' || product.category === category) && (!q || [product.title, product.subtitle, product.id, product.category].join(' ').toLowerCase().includes(q)))
+    return products.filter((product) => (category === 'all' || product.category === category) && (!q || [product.title, product.subtitle, product.id, product.category].join(' ').toLowerCase().includes(q))).sort((a,b)=>adminCategoryPriority[a.category]-adminCategoryPriority[b.category] || a.sortOrder-b.sortOrder)
   }, [category, products, search])
 
   return (
@@ -435,9 +437,9 @@ function ProductManager() {
 
 
 const serviceCategoryOptions: Array<{ value: ServiceCategory; label: string }> = [
+  { value: 'technology', label: 'Technology' },
   { value: 'education', label: 'Education' },
   { value: 'travel', label: 'Travel' },
-  { value: 'technology', label: 'Technology' },
   { value: 'media', label: 'Media' },
 ]
 
@@ -514,7 +516,7 @@ function ServiceManager() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return services.filter((service) => (category === 'all' || service.category === category) && (!q || [service.title, service.description, service.id, service.category].join(' ').toLowerCase().includes(q)))
+    return services.filter((service) => (category === 'all' || service.category === category) && (!q || [service.title, service.description, service.id, service.category].join(' ').toLowerCase().includes(q))).sort((a,b)=>adminCategoryPriority[a.category]-adminCategoryPriority[b.category] || a.sortOrder-b.sortOrder)
   }, [category, search, services])
 
   return (
