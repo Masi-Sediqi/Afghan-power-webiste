@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import { ArrowUpRight, ChevronDown } from 'lucide-react'
 
 type ProductGroup = {
@@ -11,9 +12,17 @@ type ProductGroup = {
   brandTheme?: 'light' | 'dark'
 }
 
-const productGroupRank: Record<string, number> = { Technology: 0, Education: 1, Travel: 2, Media: 3 }
-
 const productGroups: ProductGroup[] = [
+  {
+    title: 'Tech Products',
+    text: 'Ready-made databases, ERP platforms and business systems.',
+    href: '#/products/tech',
+    meta: 'Technology',
+    image: '/afghan-power-tech-logo.jpg',
+    brandLogo: true,
+    brandAlt: 'Afghan Power Tech Development Company',
+    brandTheme: 'light',
+  },
   {
     title: 'Educational Products',
     text: 'Study, admission, scholarship and student visa packages.',
@@ -32,16 +41,6 @@ const productGroups: ProductGroup[] = [
     image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=700&q=82',
   },
   {
-    title: 'Tech Products',
-    text: 'Ready-made databases, ERP platforms and business systems.',
-    href: '#/products/tech',
-    meta: 'Technology',
-    image: '/afghan-power-tech-logo.jpg',
-    brandLogo: true,
-    brandAlt: 'Afghan Power Tech Development Company',
-    brandTheme: 'light',
-  },
-  {
     title: 'Media Products',
     text: 'Advertising, social media, video and branding packages.',
     href: '#/products/media',
@@ -51,16 +50,45 @@ const productGroups: ProductGroup[] = [
     brandAlt: 'Afghan Power Media Production',
     brandTheme: 'dark',
   },
-].sort((a, b) => productGroupRank[a.meta] - productGroupRank[b.meta])
+]
 
 type ProductMegaMenuProps = {
   active?: boolean
 }
 
 export default function ProductMegaMenu({ active = false }: ProductMegaMenuProps) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const suppressUntilLeave = useRef(false)
+
+  const closeAfterSelection = () => {
+    suppressUntilLeave.current = true
+    setMenuOpen(false)
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+  }
+
+  const openMenu = () => {
+    if (!suppressUntilLeave.current) setMenuOpen(true)
+  }
+
+  const leaveMenu = () => {
+    suppressUntilLeave.current = false
+    setMenuOpen(false)
+  }
+
   return (
-    <div className="products-nav-wrap">
-      <a className={`products-nav-trigger ${active ? 'active' : ''}`} href="#/products" aria-haspopup="true">
+    <div
+      className={`products-nav-wrap ${menuOpen ? 'is-open' : ''}`}
+      onMouseEnter={openMenu}
+      onMouseLeave={leaveMenu}
+    >
+      <a
+        className={`products-nav-trigger ${active ? 'active' : ''}`}
+        href="#/products"
+        aria-haspopup="true"
+        aria-expanded={menuOpen}
+        onFocus={openMenu}
+        onClick={closeAfterSelection}
+      >
         Products <ChevronDown className="products-nav-caret" size={13} strokeWidth={2.3} />
       </a>
       <div className="products-mega" role="menu" aria-label="Product categories">
@@ -69,11 +97,11 @@ export default function ProductMegaMenu({ active = false }: ProductMegaMenuProps
             <span>AFGHAN POWER GROUP</span>
             <strong>Explore products by company</strong>
           </div>
-          <a href="#/products">View all products <ArrowUpRight size={15}/></a>
+          <a href="#/products" onClick={closeAfterSelection}>View all products <ArrowUpRight size={15}/></a>
         </div>
         <div className="products-mega-grid">
           {productGroups.map(({ title, text, href, meta, image, brandLogo, brandAlt, brandTheme }) => (
-            <a className={`mega-product-card ${brandLogo ? 'has-brand-logo' : ''}`} href={href} key={title} role="menuitem">
+            <a className={`mega-product-card ${brandLogo ? 'has-brand-logo' : ''}`} href={href} key={title} role="menuitem" onClick={closeAfterSelection}>
               <div className={`mega-product-image ${brandLogo ? 'is-brand-logo' : ''} ${brandTheme ? `brand-${brandTheme}` : ''}`}>
                 <img src={image} alt={brandAlt ?? title} loading="lazy" />
               </div>

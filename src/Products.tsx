@@ -19,11 +19,11 @@ type ProductFilter = 'all' | ProductCategory
 const categoryPriority: Record<ProductCategory, number> = { technology: 0, education: 1, travel: 2, media: 3 }
 
 const filters: { id: ProductFilter; label: string }[] = [
-  { id: 'all', label: 'All' },
   { id: 'technology', label: 'Technology' },
   { id: 'education', label: 'Education' },
   { id: 'travel', label: 'Travel' },
   { id: 'media', label: 'Media' },
+  { id: 'all', label: 'All' },
 ]
 
 const categoryMeta = {
@@ -38,7 +38,7 @@ type ProductsPageProps = { route?: string }
 const getFilterFromRoute = (route: string): ProductFilter => {
   const routeCategory = route.split('/')[2]
   if (routeCategory === 'tech') return 'technology'
-  return filters.some((filter) => filter.id === routeCategory) ? (routeCategory as ProductFilter) : 'all'
+  return filters.some((filter) => filter.id === routeCategory) ? (routeCategory as ProductFilter) : 'technology'
 }
 
 export default function ProductsPage({ route = '#/products' }: ProductsPageProps) {

@@ -1236,10 +1236,10 @@ html[dir="rtl"] .why-card-head { flex-direction: row-reverse; }
 .products-nav-wrap { position: relative; height: 100%; display: flex; align-items: center; }
 .products-nav-trigger { height: 100%; display: inline-flex !important; align-items: center; gap: 5px; }
 .products-nav-caret { flex: 0 0 auto; margin-top: 1px; transition: transform .22s ease; }
-.products-nav-wrap:hover .products-nav-caret { transform: rotate(180deg); }
+.products-nav-wrap.is-open .products-nav-caret { transform: rotate(180deg); }
 .products-mega { position: absolute; top: calc(100% - 2px); left: 50%; width: min(920px, 88vw); padding: 17px; transform: translate(-50%, 12px); opacity: 0; visibility: hidden; pointer-events: none; border: 1px solid rgba(8,115,209,.13); border-radius: 22px; background: rgba(255,255,255,.96); box-shadow: 0 30px 80px rgba(7,17,27,.16); backdrop-filter: blur(24px); transition: opacity .2s ease, transform .2s ease, visibility .2s ease; z-index: 90; }
 .products-nav-wrap::after { content:""; position:absolute; top:70%; left:-20px; right:-20px; height:28px; }
-.products-nav-wrap:hover .products-mega, .products-nav-wrap:focus-within .products-mega { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); }
+.products-nav-wrap.is-open .products-mega { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); }
 .products-mega-head { padding: 3px 4px 14px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; }
 .products-mega-head div { display:grid; gap:4px; }
 .products-mega-head span { color:#0873d1; font-size:8px; font-weight:850; letter-spacing:.18em; }
