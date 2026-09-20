@@ -1,12 +1,26 @@
 import { ArrowUpRight, ChevronDown } from 'lucide-react'
 
-const productGroups = [
+type ProductGroup = {
+  title: string
+  text: string
+  href: string
+  meta: string
+  image: string
+  brandLogo?: boolean
+  brandAlt?: string
+  brandTheme?: 'light' | 'dark'
+}
+
+const productGroups: ProductGroup[] = [
   {
     title: 'Educational Products',
     text: 'Study, admission, scholarship and student visa packages.',
     href: '#/products/education',
     meta: 'Education',
-    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=700&q=82',
+    image: '/afghan-power-education-logo.jpg',
+    brandLogo: true,
+    brandAlt: 'Afghan Power Educational Consultancy Company',
+    brandTheme: 'light',
   },
   {
     title: 'Travel Products',
@@ -20,14 +34,20 @@ const productGroups = [
     text: 'Ready-made databases, ERP platforms and business systems.',
     href: '#/products/tech',
     meta: 'Technology',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=700&q=82',
+    image: '/afghan-power-tech-logo.jpg',
+    brandLogo: true,
+    brandAlt: 'Afghan Power Tech Development Company',
+    brandTheme: 'light',
   },
   {
     title: 'Media Products',
     text: 'Advertising, social media, video and branding packages.',
     href: '#/products/media',
     meta: 'Media',
-    image: 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=700&q=82',
+    image: '/afghan-power-media-logo.png',
+    brandLogo: true,
+    brandAlt: 'Afghan Power Media Production',
+    brandTheme: 'dark',
   },
 ]
 
@@ -50,9 +70,11 @@ export default function ProductMegaMenu({ active = false }: ProductMegaMenuProps
           <a href="#/products">View all products <ArrowUpRight size={15}/></a>
         </div>
         <div className="products-mega-grid">
-          {productGroups.map(({ title, text, href, meta, image }) => (
-            <a className="mega-product-card" href={href} key={title} role="menuitem">
-              <div className="mega-product-image"><img src={image} alt="" loading="lazy" /></div>
+          {productGroups.map(({ title, text, href, meta, image, brandLogo, brandAlt, brandTheme }) => (
+            <a className={`mega-product-card ${brandLogo ? 'has-brand-logo' : ''}`} href={href} key={title} role="menuitem">
+              <div className={`mega-product-image ${brandLogo ? 'is-brand-logo' : ''} ${brandTheme ? `brand-${brandTheme}` : ''}`}>
+                <img src={image} alt={brandAlt ?? title} loading="lazy" />
+              </div>
               <span className="mega-product-meta">{meta}</span>
               <strong>{title}</strong>
               <p>{text}</p>
