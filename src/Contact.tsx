@@ -9,7 +9,6 @@ const fallback: ContactSettings = {
   phone:'+93 700 000 000', email:'info@afghanpower.com', whatsapp:'+93 700 000 000', office:'Kabul, Afghanistan', workingHours:'Sat – Thu · 8:30 AM – 5:00 PM',
   infoTitle:'Visit, call or message us.', infoText:'Reach Afghan Power Group directly for education, travel, technology and media inquiries.', mapTitle:'Visit us in Kabul.', mapText:'Use the map below to find our office.', mapEmbedUrl:'https://www.google.com/maps?q=Kabul%2C%20Afghanistan&output=embed', divisions:[],
 }
-const contactCategoryPriority: Record<string, number> = { technology: 0, education: 1, travel: 2, media: 3 }
 const icons: Record<string, typeof GraduationCap> = { education:GraduationCap, travel:PlaneTakeoff, technology:Zap, media:Video }
 const telHref=(value:string)=>`tel:${value.replace(/[^+\d]/g,'')}`
 const waHref=(value:string)=>`https://wa.me/${value.replace(/\D/g,'')}`
@@ -24,13 +23,13 @@ export default function ContactPage() {
   const [form,setForm]=useState({name:'',phone:'',email:'',division:'',service:'',subject:'',message:''})
 
   useEffect(()=>{ let active=true; Promise.all([contactApi.get(),servicesApi.list()]).then(([c,s])=>{if(!active)return;setContact(localizeContact(c.contact,language));setServices(s.services.map(item=>localizeService(item,language)))}).catch(()=>{}); return()=>{active=false}},[language])
-  const filteredServices=useMemo(()=>{const list=form.division?services.filter(s=>s.category===form.division):services;return [...list].sort((a,b)=>contactCategoryPriority[a.category]-contactCategoryPriority[b.category] || a.sortOrder-b.sortOrder)},[services,form.division])
-  const divisions=(contact.divisions.length?contact.divisions:[
-    {id:'technology',label:'TECHNOLOGY',title:'Tech Development',text:'Software, databases, ERP systems, websites and custom digital solutions.',visible:true,sortOrder:1},
-    {id:'education',label:'EDUCATION',title:'Educational Consultancy',text:'Study visas, university admissions, scholarships and international education guidance.',visible:true,sortOrder:2},
-    {id:'travel',label:'TRAVEL',title:'Travel Agency',text:'Tourist visas, air tickets, travel packages and practical journey support.',visible:true,sortOrder:3},
+  const filteredServices=useMemo(()=>form.division?services.filter(s=>s.category===form.division):services,[services,form.division])
+  const divisions=contact.divisions.length?contact.divisions:[
+    {id:'education',label:'EDUCATION',title:'Educational Consultancy',text:'Study visas, university admissions, scholarships and international education guidance.',visible:true,sortOrder:1},
+    {id:'travel',label:'TRAVEL',title:'Travel Agency',text:'Tourist visas, air tickets, travel packages and practical journey support.',visible:true,sortOrder:2},
+    {id:'technology',label:'TECHNOLOGY',title:'Tech Development',text:'Software, databases, ERP systems, websites and custom digital solutions.',visible:true,sortOrder:3},
     {id:'media',label:'MEDIA',title:'Media Production',text:'Advertising, video production, branding, design and digital marketing services.',visible:true,sortOrder:4},
-  ]).slice().sort((a,b)=>contactCategoryPriority[a.id]-contactCategoryPriority[b.id] || a.sortOrder-b.sortOrder)
+  ]
 
   const submit=async(event:FormEvent)=>{event.preventDefault();setSending(true);setError('');setSubmitted(false);try{await contactApi.send(form);setSubmitted(true);setForm({name:'',phone:'',email:'',division:'',service:'',subject:'',message:''})}catch(e){setError(e instanceof Error?e.message:'Unable to send message.')}finally{setSending(false)}}
 

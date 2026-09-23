@@ -234,12 +234,10 @@ function Dashboard() {
 }
 
 
-const adminCategoryPriority: Record<string, number> = { technology: 0, education: 1, travel: 2, media: 3 }
-
 const productCategoryOptions: Array<{ value: ProductCategory; label: string }> = [
-  { value: 'technology', label: 'Technology' },
   { value: 'education', label: 'Education' },
   { value: 'travel', label: 'Travel' },
+  { value: 'technology', label: 'Technology' },
   { value: 'media', label: 'Media' },
 ]
 
@@ -349,7 +347,7 @@ function ProductManager() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return products.filter((product) => (category === 'all' || product.category === category) && (!q || [product.title, product.subtitle, product.id, product.category].join(' ').toLowerCase().includes(q))).sort((a,b)=>adminCategoryPriority[a.category]-adminCategoryPriority[b.category] || a.sortOrder-b.sortOrder)
+    return products.filter((product) => (category === 'all' || product.category === category) && (!q || [product.title, product.subtitle, product.id, product.category].join(' ').toLowerCase().includes(q)))
   }, [category, products, search])
 
   return (
@@ -437,9 +435,9 @@ function ProductManager() {
 
 
 const serviceCategoryOptions: Array<{ value: ServiceCategory; label: string }> = [
-  { value: 'technology', label: 'Technology' },
   { value: 'education', label: 'Education' },
   { value: 'travel', label: 'Travel' },
+  { value: 'technology', label: 'Technology' },
   { value: 'media', label: 'Media' },
 ]
 
@@ -516,7 +514,7 @@ function ServiceManager() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return services.filter((service) => (category === 'all' || service.category === category) && (!q || [service.title, service.description, service.id, service.category].join(' ').toLowerCase().includes(q))).sort((a,b)=>adminCategoryPriority[a.category]-adminCategoryPriority[b.category] || a.sortOrder-b.sortOrder)
+    return services.filter((service) => (category === 'all' || service.category === category) && (!q || [service.title, service.description, service.id, service.category].join(' ').toLowerCase().includes(q)))
   }, [category, search, services])
 
   return (
@@ -922,12 +920,12 @@ function MessagesManager(){
   const remove=async(item:ContactMessageRecord)=>{if(!window.confirm(`Delete message from ${item.name}?`))return;try{await adminApi.deleteMessage(item.id);setItems(v=>v.filter(x=>x.id!==item.id));if(selected?.id===item.id)setSelected(null)}catch(e){setError(e instanceof Error?e.message:'Unable to delete message.')}}
   if(loading)return <div className="admin-products-loading"><div className="admin-loader"/><span>Loading messages…</span></div>
   const unread=items.filter(i=>i.status==='new').length
-  return <div className="admin-products-view admin-messages-view"><div className="admin-page-heading"><div><span>INBOX</span><h1>Messages & Requests</h1><p>Messages submitted from the public Contact form.</p></div><div className="admin-date-chip"><MessageSquare size={16}/>{unread} unread</div></div>{error&&<div className="admin-products-alert is-error">{error}</div>}
+  return <div className="admin-products-view admin-messages-view"><div className="admin-page-heading"><div><span>INBOX</span><h1>Messages & Requests</h1><p>Contact messages and demo booking requests submitted from the public website.</p></div><div className="admin-date-chip"><MessageSquare size={16}/>{unread} unread</div></div>{error&&<div className="admin-products-alert is-error">{error}</div>}
     <section className="admin-products-list"><div className="admin-products-list-head"><div><strong>Contact Inbox</strong><span>{items.length} total messages</span></div><button className="admin-secondary-action" onClick={()=>void load()}><RefreshCw size={15}/> Refresh</button></div>
-      {!items.length&&<div className="admin-module-empty"><MessageSquare size={28}/><h2>No messages yet.</h2><p>New Contact form submissions will appear here.</p></div>}
-      {items.map(item=><article className={`admin-product-row admin-message-row ${item.status==='new'?'is-unread':''}`} key={item.id}><div className="admin-product-row-main"><div><small className={item.status==='new'?'is-visible':''}>{item.status==='new'?'NEW':'READ'}</small><small>{new Intl.DateTimeFormat('en',{dateStyle:'medium',timeStyle:'short'}).format(new Date(item.createdAt))}</small></div><h3>{item.subject||'Contact request'} · {item.name}</h3><p>{item.message}</p><small>{item.phone}{item.email?` · ${item.email}`:''}{item.service?` · ${item.service}`:''}</small></div><div className="admin-product-row-actions"><button title="View" onClick={()=>void open(item)}><Eye size={16}/></button><button title={item.status==='new'?'Mark read':'Mark unread'} onClick={()=>void toggle(item)}>{item.status==='new'?<Eye size={16}/>:<EyeOff size={16}/>}</button><button className="danger" title="Delete" onClick={()=>void remove(item)}><Trash2 size={16}/></button></div></article>)}
+      {!items.length&&<div className="admin-module-empty"><MessageSquare size={28}/><h2>No messages yet.</h2><p>New contact messages and demo requests will appear here.</p></div>}
+      {items.map(item=><article className={`admin-product-row admin-message-row ${item.status==='new'?'is-unread':''}`} key={item.id}><div className="admin-product-row-main"><div><small className={item.status==='new'?'is-visible':''}>{item.status==='new'?'NEW':'READ'}</small><small className={item.requestType==='demo'?'is-demo':''}>{item.requestType==='demo'?'DEMO':'CONTACT'}</small><small>{new Intl.DateTimeFormat('en',{dateStyle:'medium',timeStyle:'short'}).format(new Date(item.createdAt))}</small></div><h3>{item.subject||'Contact request'} · {item.name}</h3><p>{item.message}</p><small>{item.phone}{item.email?` · ${item.email}`:''}{item.service?` · ${item.service}`:''}</small></div><div className="admin-product-row-actions"><button title="View" onClick={()=>void open(item)}><Eye size={16}/></button><button title={item.status==='new'?'Mark read':'Mark unread'} onClick={()=>void toggle(item)}>{item.status==='new'?<Eye size={16}/>:<EyeOff size={16}/>}</button><button className="danger" title="Delete" onClick={()=>void remove(item)}><Trash2 size={16}/></button></div></article>)}
     </section>
-    {selected&&<div className="admin-product-modal" role="dialog" aria-modal="true"><button className="admin-product-modal-backdrop" onClick={()=>setSelected(null)} aria-label="Close message"/><div className="admin-product-form"><header><div><span>CONTACT MESSAGE</span><h2>{selected.subject||'Contact request'}</h2></div><button onClick={()=>setSelected(null)}><X size={20}/></button></header><div className="admin-product-form-scroll"><section className="admin-form-section"><div className="admin-form-grid"><label><span>Name</span><input value={selected.name} readOnly/></label><label><span>Phone</span><input value={selected.phone} readOnly/></label><label><span>Email</span><input value={selected.email||'—'} readOnly/></label><label><span>Division</span><input value={selected.division||'—'} readOnly/></label><label><span>Service</span><input value={selected.service||'—'} readOnly/></label><label><span>Received</span><input value={new Date(selected.createdAt).toLocaleString()} readOnly/></label><label className="span-2"><span>Message</span><textarea rows={8} value={selected.message} readOnly/></label></div></section></div><footer><button onClick={()=>void toggle(selected)}>{selected.status==='new'?'Mark Read':'Mark Unread'}</button><button className="save" onClick={()=>setSelected(null)}>Close</button></footer></div></div>}
+    {selected&&<div className="admin-product-modal" role="dialog" aria-modal="true"><button className="admin-product-modal-backdrop" onClick={()=>setSelected(null)} aria-label="Close message"/><div className="admin-product-form"><header><div><span>{selected.requestType==='demo'?'DEMO BOOKING REQUEST':'CONTACT MESSAGE'}</span><h2>{selected.subject||'Contact request'}</h2></div><button onClick={()=>setSelected(null)}><X size={20}/></button></header><div className="admin-product-form-scroll"><section className="admin-form-section"><div className="admin-form-grid"><label><span>Name</span><input value={selected.name} readOnly/></label><label><span>Phone</span><input value={selected.phone} readOnly/></label><label><span>Email</span><input value={selected.email||'—'} readOnly/></label><label><span>Division</span><input value={selected.division||'—'} readOnly/></label><label><span>Service / Product</span><input value={selected.service||'—'} readOnly/></label><label><span>Received</span><input value={new Date(selected.createdAt).toLocaleString()} readOnly/></label>{selected.requestType==='demo'&&<><label><span>Company</span><input value={selected.company||'—'} readOnly/></label><label><span>Meeting Type</span><input value={selected.meetingType||'—'} readOnly/></label><label><span>Preferred Date</span><input value={selected.preferredDate||'—'} readOnly/></label><label><span>Preferred Time</span><input value={selected.preferredTime||'—'} readOnly/></label><label><span>Time Zone</span><input value={selected.timeZone||'—'} readOnly/></label></>}<label className="span-2"><span>Message</span><textarea rows={8} value={selected.message} readOnly/></label></div></section></div><footer><button onClick={()=>void toggle(selected)}>{selected.status==='new'?'Mark Read':'Mark Unread'}</button><button className="save" onClick={()=>setSelected(null)}>Close</button></footer></div></div>}
   </div>
 }
 

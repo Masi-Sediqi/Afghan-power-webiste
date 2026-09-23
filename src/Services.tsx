@@ -4,10 +4,9 @@ import { localizeService, servicesApi, type ServiceCategory, type ServiceRecord 
 import { useSiteLanguage } from './useSiteLanguage'
 
 type Filter = 'All Services' | 'Education' | 'Travel' | 'Technology' | 'Media'
-const filters: Filter[] = ['All Services', 'Technology', 'Education', 'Travel', 'Media']
-const categoryPriority: Record<ServiceCategory, number> = { technology: 0, education: 1, travel: 2, media: 3 }
+const filters: Filter[] = ['All Services', 'Education', 'Travel', 'Technology', 'Media']
 const categoryLabels: Record<ServiceCategory, Exclude<Filter, 'All Services'>> = {
-  technology: 'Technology', education: 'Education', travel: 'Travel', media: 'Media',
+  education: 'Education', travel: 'Travel', technology: 'Technology', media: 'Media',
 }
 const filterToCategory: Record<Exclude<Filter, 'All Services'>, ServiceCategory> = {
   Education: 'education', Travel: 'travel', Technology: 'technology', Media: 'media',
@@ -32,7 +31,7 @@ export default function ServicesPage() {
   }, [])
 
   const categoryCounts = useMemo(() => {
-    const counts: Record<ServiceCategory, number> = { technology: 0, education: 0, travel: 0, media: 0 }
+    const counts: Record<ServiceCategory, number> = { education: 0, travel: 0, technology: 0, media: 0 }
     localizedServices.forEach((service) => { counts[service.category] += 1 })
     return counts
   }, [localizedServices])
@@ -43,7 +42,7 @@ export default function ServicesPage() {
       const matchesCategory = activeFilter === 'All Services' || service.category === filterToCategory[activeFilter]
       const matchesSearch = !normalized || `${service.title} ${service.description} ${categoryLabels[service.category]}`.toLowerCase().includes(normalized)
       return matchesCategory && matchesSearch
-    }).sort((a, b) => categoryPriority[a.category] - categoryPriority[b.category] || a.sortOrder - b.sortOrder)
+    })
   }, [activeFilter, query, localizedServices])
 
   return (
@@ -70,9 +69,9 @@ export default function ServicesPage() {
             <span><Sparkles size={15} /> {services.length} services available</span>
           </div>
           <div className="services-showcase-stack">
-            <article><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=82" alt="Technology services" /><strong>Technology</strong></article>
             <article><img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=82" alt="Education services" /><strong>Education</strong></article>
             <article><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=82" alt="Travel services" /><strong>Travel</strong></article>
+            <article><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=82" alt="Technology services" /><strong>Technology</strong></article>
             <article><img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=82" alt="Media services" /><strong>Media</strong></article>
           </div>
         </div>

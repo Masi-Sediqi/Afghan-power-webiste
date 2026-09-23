@@ -4,7 +4,10 @@ export type ContactDivisionText = { label:string; title:string; text:string }
 export type ContactDivision = ContactDivisionText & { id:string; visible:boolean; sortOrder:number; translations?: LocalizedFields<ContactDivisionText> }
 export type ContactTextFields = { heroKicker:string; heroTitle:string; heroHighlight:string; heroText:string; office:string; workingHours:string; infoTitle:string; infoText:string; mapTitle:string; mapText:string }
 export type ContactSettings = ContactTextFields & { phone:string; email:string; whatsapp:string; mapEmbedUrl:string; divisions:ContactDivision[]; translations?: LocalizedFields<ContactTextFields> }
-export type ContactMessageInput = { name:string; phone:string; email:string; division:string; service:string; subject:string; message:string }
+export type ContactMessageInput = {
+  name:string; phone:string; email:string; division:string; service:string; subject:string; message:string
+  requestType?:'contact'|'demo'; company?:string; preferredDate?:string; preferredTime?:string; meetingType?:string; timeZone?:string
+}
 export type ContactMessageRecord = ContactMessageInput & { id:string; status:'new'|'read'; createdAt:string; updatedAt:string }
 export const localizeContact = (contact: ContactSettings, lang: LangCode): ContactSettings => {
   const localized = localizedValue(contact, contact.translations as LocalizedFields<ContactSettings> | undefined, lang)

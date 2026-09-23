@@ -16,14 +16,12 @@ import { useSiteLanguage } from './useSiteLanguage'
 
 type ProductFilter = 'all' | ProductCategory
 
-const categoryPriority: Record<ProductCategory, number> = { technology: 0, education: 1, travel: 2, media: 3 }
-
 const filters: { id: ProductFilter; label: string }[] = [
-  { id: 'technology', label: 'Technology' },
+  { id: 'all', label: 'All' },
   { id: 'education', label: 'Education' },
   { id: 'travel', label: 'Travel' },
+  { id: 'technology', label: 'Technology' },
   { id: 'media', label: 'Media' },
-  { id: 'all', label: 'All' },
 ]
 
 const categoryMeta = {
@@ -38,7 +36,7 @@ type ProductsPageProps = { route?: string }
 const getFilterFromRoute = (route: string): ProductFilter => {
   const routeCategory = route.split('/')[2]
   if (routeCategory === 'tech') return 'technology'
-  return filters.some((filter) => filter.id === routeCategory) ? (routeCategory as ProductFilter) : 'technology'
+  return filters.some((filter) => filter.id === routeCategory) ? (routeCategory as ProductFilter) : 'all'
 }
 
 export default function ProductsPage({ route = '#/products' }: ProductsPageProps) {
@@ -78,7 +76,7 @@ export default function ProductsPage({ route = '#/products' }: ProductsPageProps
         ...product.features,
       ].join(' ').toLowerCase()
       return matchesCategory && (!normalizedQuery || searchableText.includes(normalizedQuery))
-    }).sort((a, b) => categoryPriority[a.category] - categoryPriority[b.category] || a.sortOrder - b.sortOrder)
+    })
   }, [activeFilter, localizedProducts, searchTerm])
 
   return (
