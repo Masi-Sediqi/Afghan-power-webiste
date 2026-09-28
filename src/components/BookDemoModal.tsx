@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { CalendarDays, CheckCircle2, Clock3, Laptop2, Mail, MessageSquareText, Phone, Send, UserRound, X } from 'lucide-react'
+import { CalendarDays, CheckCircle2, Clock3, Laptop2, Mail, MessageSquare, Phone, Send, User, X } from 'lucide-react'
 import { contactApi } from '../contactApi'
 import { localizeProduct, productsApi, type ProductRecord } from '../productsApi'
 import { useSiteLanguage } from '../useSiteLanguage'
@@ -139,15 +139,15 @@ export default function BookDemoModal({ open, onClose }: Props) {
             </header>
             <form className="demo-form" onSubmit={submit}>
               <div className="demo-field-grid">
-                <label><span>{t.name} *</span><div><UserRound size={16}/><input required value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})} placeholder={t.name}/></div></label>
+                <label><span>{t.name} *</span><div><User size={16}/><input required value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})} placeholder={t.name}/></div></label>
                 <label><span>{t.phone} *</span><div><Phone size={16}/><input required type="tel" value={form.phone} onChange={(e)=>setForm({...form,phone:e.target.value})} placeholder="+93 700 000 000"/></div></label>
                 <label><span>{t.email} <small>{t.optional}</small></span><div><Mail size={16}/><input type="email" value={form.email} onChange={(e)=>setForm({...form,email:e.target.value})} placeholder="name@example.com"/></div></label>
                 <label><span>{t.company} <small>{t.optional}</small></span><div><Laptop2 size={16}/><input value={form.company} onChange={(e)=>setForm({...form,company:e.target.value})} placeholder={t.company}/></div></label>
                 <label className="span-2"><span>{t.product} *</span><select required value={form.productId} onChange={(e)=>setForm({...form,productId:e.target.value})}><option value="">{t.choose}</option>{products.map((product)=><option key={product.id} value={product.id}>{product.title}</option>)}<option value="Custom Software / Other">Custom Software / Other</option></select></label>
                 <label><span>{t.date} *</span><div><CalendarDays size={16}/><input required type="date" min={minDate} value={form.preferredDate} onChange={(e)=>setForm({...form,preferredDate:e.target.value})}/></div></label>
                 <label><span>{t.time} *</span><div><Clock3 size={16}/><input required type="time" value={form.preferredTime} onChange={(e)=>setForm({...form,preferredTime:e.target.value})}/></div></label>
-                <label className="span-2"><span>{t.meeting} *</span><div className="demo-meeting-options"><button type="button" className={form.meetingType==='Online'?'active':''} onClick={()=>setForm({...form,meetingType:'Online'})}><Laptop2 size={16}/>{t.online}</button><button type="button" className={form.meetingType==='Office'?'active':''} onClick={()=>setForm({...form,meetingType:'Office'})}><UserRound size={16}/>{t.office}</button></div></label>
-                <label className="span-2 demo-notes"><span>{t.notes} <small>{t.optional}</small></span><div><MessageSquareText size={16}/><textarea rows={4} value={form.notes} onChange={(e)=>setForm({...form,notes:e.target.value})} placeholder={t.notesPh}/></div></label>
+                <label className="span-2"><span>{t.meeting} *</span><div className="demo-meeting-options"><button type="button" className={form.meetingType==='Online'?'active':''} onClick={()=>setForm({...form,meetingType:'Online'})}><Laptop2 size={16}/>{t.online}</button><button type="button" className={form.meetingType==='Office'?'active':''} onClick={()=>setForm({...form,meetingType:'Office'})}><User size={16}/>{t.office}</button></div></label>
+                <label className="span-2 demo-notes"><span>{t.notes} <small>{t.optional}</small></span><div><MessageSquare size={16}/><textarea rows={4} value={form.notes} onChange={(e)=>setForm({...form,notes:e.target.value})} placeholder={t.notesPh}/></div></label>
               </div>
               {error && <div className="demo-form-error" role="alert">{error}</div>}
               <button className="demo-submit" type="submit" disabled={sending}>{sending ? t.sending : t.send}<Send size={16}/></button>
