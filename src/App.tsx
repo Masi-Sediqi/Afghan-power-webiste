@@ -178,7 +178,7 @@ const groupSlides = [
     title: ['POWERING', 'THE DIGITAL', 'FUTURE'],
     subtitle: 'Tech Development',
     description: 'Database systems, ERP platforms, websites, applications and custom software for modern businesses.',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1800&q=86',
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1800&q=86',
     label: 'Digital Solutions',
   },
   {
@@ -698,13 +698,13 @@ function PublicSite() {
           <div className="footer-contact">
             <h3>Get in touch</h3>
             <a href="mailto:info@afghanpower.com"><Mail size={24}/> info@afghanpower.com</a>
-            <a href="tel:+93700000000"><Phone size={24}/> +93 700 000 000</a>
-            <p><MapPin size={25}/> Kabul, Afghanistan<br/>Afghan Power Group</p>
+            <a href="tel:+93783828054"><Phone size={24}/> 0783828054</a>
+            <p><MapPin size={25}/> Kabul, Shahr-e-Naw, Ansari Intersection<br/>Afghan Power Group</p>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Afghan Power Group. All rights reserved.</p>
+          <p>© 2016 Afghan Power Group. All rights reserved.</p>
           <div className="footer-socials" aria-label="Social links">
             <a href="#" aria-label="Facebook">f</a>
             <a href="#" aria-label="X">x</a>

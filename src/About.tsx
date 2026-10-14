@@ -46,7 +46,7 @@ const divisions = [
     name: 'Tech Development',
     label: 'Technology',
     text: 'Business software, ERP systems, websites, mobile applications and custom digital solutions for modern organizations.',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=84',
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=84',
     href: '#/products/tech',
   },
   {
